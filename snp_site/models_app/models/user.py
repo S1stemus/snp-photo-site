@@ -1,8 +1,6 @@
-from django.db import models
-
-
-class User(models.Model):
-    username = models.CharField(max_length=100)
-    
+from django.contrib.auth.models import AbstractUser
+class User(AbstractUser):
     class Meta:
-        app_label = 'models_app'
+        db_table = 'users'
+        verbose_name_plural = 'Пользователи'
+        verbose_name = 'Пользователь'

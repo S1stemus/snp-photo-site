@@ -8,4 +8,6 @@ class Like(models.Model):
         app_label = 'models_app'
         db_table = 'likes'
         unique_together = ('photo', 'user')
+        verbose_name_plural = 'Лайки'
+        verbose_name = 'Лайк'
 
