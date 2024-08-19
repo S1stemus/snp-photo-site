@@ -1,17 +1,11 @@
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Photo</title>
-</head>
-<body>
+{% extends "base.html" %}
+ 
+{%block title%}Create Photo{%endblock%}
+{%block content%}
     <h1>Create a New Photo</h1>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Create</button>
     </form>
-</body>
-</html>
+{%endblock%}

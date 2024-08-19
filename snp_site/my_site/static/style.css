@@ -1,0 +1,38 @@
+html, body {
+    height: 100%; /* Задаем высоту 100% для html и body */
+    margin: 0; /* Убираем отступы */
+}
+
+body {
+    display: flex;
+    flex-direction: column; /* Вертикальное расположение элементов */
+}
+
+main {
+    flex: 1; /* Занимает оставшееся пространство */
+}
+
+header {
+    background-color: #a0a0a0; /* Цвет фона шапки */
+    color: #fff; /* Цвет текста */
+    padding:10px ;
+   
+}
+
+footer {
+    background-color: #ffffff; /* Цвет фона футера */
+    text-align: center; /* Центрируем текст */
+    padding: 10px; /* Отступы внутри футера */
+}
+
+a{
+
+    color: rgb(0, 0, 0);
+    padding:10px ;
+}
+
+img{
+    height: 400px; ;
+    width: 300px;
+
+}
