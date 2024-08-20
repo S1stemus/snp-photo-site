@@ -6,6 +6,7 @@ html, body {
 body {
     display: flex;
     flex-direction: column; /* Вертикальное расположение элементов */
+    background-color: #353030;
 }
 
 main {
@@ -32,7 +33,46 @@ a{
 }
 
 img{
-    height: 400px; ;
-    width: 300px;
+    height: 70%; 
+    width: 100%;
+
+}
+.post-container {
+    display: flex;
+    flex-direction: column; /* Устанавливаем направление колонкой */
+    align-items: center; /* Центрируем элементы по горизонтали */
+}
+.coment-and-like-container{
+    display: flex; /* Используем Flexbox */
+    justify-content: space-between; /* Размещаем элементы по краям */
+    align-items: center; /* Центрируем элементы по вертикали (если нужно) */
+    padding: 10px; /* Отступы внутри контейнера */
+    
+}
+.left-element, .right-element {
+    padding: 10px; /* Отступы внутри элементов */
+    background-color: white; /* Цвет фона элементов (по желанию) */
+    flex-direction: row;
+}
+.post {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin: 10px; 
+    padding: 15px; 
+    width: 80%; /* Установите ширину поста, чтобы он не занимал всю ширину контейнера */
+    max-width: 600px; /* Максимальная ширина поста */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+}
+.like-comment-image{
+    height: 20px;
+    width: 20px;}
+.my-button {
+    background-color: transparent; /* Убираем фон */
+    border: none; /* Убираем рамку */
+    cursor: pointer; /* Курсор в виде указателя */
+    display: flex; /* Используем флекс для выравнивания содержимого */
+    align-items: center; /* Вертикальное выравнивание */
 
 }

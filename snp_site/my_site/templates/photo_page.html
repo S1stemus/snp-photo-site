@@ -1,0 +1,15 @@
+{%extends "base.html"%}
+{%block content%}
+    <h1>{{ photo.user}}<h1> 
+    <h1>{{photo.caption}}</h1>
+    <img src={{photo.photo.url}} alt="нет фото"/>
+    <p>Лайки:{{photo.likes.count}}<p>
+        
+    {%for com in photo.model_relation.all%}
+        <h1>{{com.user}}</h1>
+        <p>{{com.comment}}</p>
+    {%empty%}   
+        <p>nothing</p>
+    {%endfor%}
+
+{%endblock%}
