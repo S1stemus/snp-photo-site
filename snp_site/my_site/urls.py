@@ -8,9 +8,9 @@ from my_site.views.photo_page import PhotoPageView
 from my_site.views.photo_list import PhotoListView
 urlpatterns = [ 
 
-    path('makephoto', MainPageView.as_view(), name="main_page"),
-    path('', PhotoListView.as_view(), name="photo_list"),
+    path('photos/create/', MainPageView.as_view(), name="main_page"),
+    path('photos/', PhotoListView.as_view(), name="photo_list"),
+    path('photos/<pk>/', PhotoPageView.as_view(), name="photo_page"),
     path('users/',include('django.contrib.auth.urls')),
-    path('register', RegisterView.as_view(), name="register"),
-    path('<pk>/', PhotoPageView.as_view(), name="photo_page")
+    path('register/', RegisterView.as_view(), name="register"),
 ]
