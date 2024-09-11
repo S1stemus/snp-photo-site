@@ -22,7 +22,7 @@ class RegisterView(View):
             password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=password)
             login(request, user)
-            return redirect('main_page')
+            return redirect('photo_list')
         context = {
             'form': form
         }

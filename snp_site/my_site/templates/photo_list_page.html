@@ -1,29 +1,41 @@
 {% extends "base.html" %}
 {% load static %}
-{%block title%}Photo List{%endblock%}
+{%block title%}Photo List{%endblock%}  
 {%block content%}
 <div class ="post-container">
+    <select name="filter" onchange='location = this.value;'>
+        <option value="all">All</option>
+        <option value="5">Liked</option>
+    </select>
         {% for photo in object_list %}
-        <form action="{% url 'photo_page' photo.id %}" method="get">
-            <button type="submit" class="my-button">
                 <div class="post">
 
                     <h1>{{ photo.user}}<h1> 
                     <h1>{{photo.caption}}</h1>
-                    <img src={{photo.photo.url}} alt="нет фото"/>
+                    <a href='{% url 'photo_page' photo.id %}'>
+                        <img src={{photo.photo.url}} alt="нет фото"/>
+                    </a>
                     <div class="coment-and-like-container">
                         <div class="left-element">
                             <img src="{% static 'images/chat.png' %} " class="like-comment-image"/>
                             {{photo.model_relation.count}}
                         </div>
                         <div class="right-element">
+                            {% if user.is_authenticated%}
+                                <form action="{% url 'like' photo.pk  %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" >
+                                        <img src="{% static 'images/heart.png' %}" class="like-comment-image"/>
+                                        {{photo.likes.count}}
+                                    </button>
+                                </form>
+                            {%else%}
                             <img src="{% static 'images/heart.png' %}" class="like-comment-image"/>
                             {{photo.likes.count}}
+                            {%endif%}
                         </div>
                     </div>
                 </div> 
-            </button>  
-            </form>
         {% endfor %}
 </div>
 {%endblock%}

@@ -1,0 +1,25 @@
+<ul> 
+    <li> 
+        <p>{{ comment.user }}</p> 
+        <p>{{ comment.comment }}</p>
+        <form action="{% url 'comment' comment.pk %}" method="post">    
+            {% csrf_token %}
+            <input type="hidden" name="content_type" value="comment">
+            <input type="text" name="comment">
+            <button type="submit" >Ответить</button>
+        </form>              
+    </li> 
+
+    {% if comment.model_relation.all %}
+        <ul> 
+            {% for com in comment.model_relation.all %}
+            <li>
+                {% include 'comment.html' with comment=com%}
+            </li>
+            {% endfor %}
+        </ul>
+    {%else%}
+        <p>Нет комментариев</p>
+    {% endif %}    
+</ul>
+

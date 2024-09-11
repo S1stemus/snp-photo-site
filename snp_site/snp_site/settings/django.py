@@ -112,5 +112,5 @@ AUTH_USER_MODEL = 'models_app.User'
 MEDIA_ROOT = BASE_DIR / 'images'
 MEDIA_URL = '/images/'
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/photos/'
+LOGOUT_REDIRECT_URL = '/photos/'

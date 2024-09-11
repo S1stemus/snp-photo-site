@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericRelation
+
+
 
 class Comment (models.Model):
     comment = models.CharField(max_length=255,verbose_name="Комментарий",null=False,blank=False)
@@ -10,6 +13,7 @@ class Comment (models.Model):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE) 
     object_id = models.PositiveIntegerField()
     object= GenericForeignKey('content_type', 'object_id')
+    model_relation=GenericRelation('models_app.Comment')
 
     class Meta:
         app_label = 'models_app'

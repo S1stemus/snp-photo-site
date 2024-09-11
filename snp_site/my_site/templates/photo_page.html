@@ -1,15 +1,29 @@
 {%extends "base.html"%}
 {%block content%}
-    <h1>{{ photo.user}}<h1> 
+{% load static %}
+<div class ="post-container">
+    <div class="post">
+    <h1>{{ photo.user}}</h1> 
     <h1>{{photo.caption}}</h1>
     <img src={{photo.photo.url}} alt="нет фото"/>
-    <p>Лайки:{{photo.likes.count}}<p>
-        
-    {%for com in photo.model_relation.all%}
-        <h1>{{com.user}}</h1>
-        <p>{{com.comment}}</p>
-    {%empty%}   
-        <p>nothing</p>
-    {%endfor%}
-
+    {% if user.is_authenticated%}
+        <form action="{% url 'comment' photo.pk  %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="content_type" value="photo">
+            <input type="text" name="comment">
+            <button type="submit" >Отправить</button>
+        </form>
+        <form action="{% url 'like' photo.pk  %}" method="post">
+            {% csrf_token %}
+            <button type="submit" >
+                <img src="{% static 'images/heart.png' %}" class="like-comment-image"/>
+                {{photo.likes.count}}
+            </button>
+        </form>
+        {%endif%}
+        {%for comment in photo.model_relation.all%}
+            {%include 'comment.html' with comment=comment%}
+        {%endfor%}
+    </div>
+</div>
 {%endblock%}
