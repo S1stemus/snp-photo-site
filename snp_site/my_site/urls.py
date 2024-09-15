@@ -8,7 +8,7 @@ from my_site.views.photo_page import PhotoPageView
 from my_site.views.photo_list import PhotoListView
 from my_site.views.like_view import LikeView
 from my_site.views.comment_view import CommentView
-from my_site.views.comment_to_comment_view import CommentToCommentView
+
 urlpatterns = [ 
 
     path('photos/create/', MainPageView.as_view(), name="main_page"),

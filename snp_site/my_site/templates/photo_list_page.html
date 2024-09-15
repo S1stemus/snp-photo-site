@@ -3,11 +3,18 @@
 {%block title%}Photo List{%endblock%}  
 {%block content%}
 <div class ="post-container">
-    <select name="filter" onchange='location = this.value;'>
-        <option value="all">All</option>
-        <option value="5">Liked</option>
-    </select>
-        {% for photo in object_list %}
+    <form action="{% url 'photo_list' %}" method="get">
+        {% csrf_token %}
+        <select name="filter", onchange="this.form.submit()">
+            <option disabled selected>Filter</option>
+            <option value="old">Old</option>
+            <option value="new">New</option>
+            <option value="popular">Popular</option>
+        </select>
+
+        
+    </form>
+        {% for photo in photos %}
                 <div class="post">
 
                     <h1>{{ photo.user}}<h1> 
