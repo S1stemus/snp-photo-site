@@ -11,6 +11,7 @@ class Photo (models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     model_relation=GenericRelation(Comment)
+    status=models.CharField(max_length=100,verbose_name="Статус",null=False,blank=False,default="Ожидает модерации")
 
     class Meta:
         app_label = 'models_app'
