@@ -37,6 +37,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'snp_site.urls'
@@ -114,3 +115,29 @@ MEDIA_URL = '/images/'
 
 LOGIN_REDIRECT_URL = '/photos/'
 LOGOUT_REDIRECT_URL = '/photos/'
+
+AUTHENTICATION_BACKENDS = [
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP':{
+            'client_id': '237313609638-6orimg6h2nh03aiaiqr2giu3kapp2kqr.apps.googleusercontent.com',
+            'secret': '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',
+        },
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'METHOD': 'oauth2',
+        'VERIFIED_EMAIL': True
+
+    },
+    'github': {
+        'APP': {
+            'client_id': 'Ov23liVhpNVqoiAgOOen',
+            'secret': 'e85b487bdbf0606bf583b218008c713b6f7987ac',
+        }
+    }
+}
+
+SOCIALACCOUNT_LOGIN_ON_GET = True

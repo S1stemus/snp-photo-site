@@ -8,4 +8,9 @@ INSTALLED_APPS = [
     'api',
     'models_app',
     'my_site',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.github',
 ]

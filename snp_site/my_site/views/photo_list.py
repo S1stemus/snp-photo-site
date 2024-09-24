@@ -4,6 +4,8 @@ from django.views.generic import ListView
 from models_app.models import Photo
 from models_app.models import Comment
 from django.shortcuts import render
+from django.db.models import Count
+from models_app.models.photo.fsm import State
 
 
 
@@ -15,13 +17,13 @@ class PhotoListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         filter=self.request.GET.get('filter')
-        photos=Photo.objects.filter(status='Опубликован')
+        photos=Photo.objects.filter(state=State.APPROVED)
         if filter=='old':
-            photos=sorted(photos, key=lambda x: x.created_at)
+            photos=photos.order_by('created_at')
         elif filter=='new':
-            photos=sorted(photos, key=lambda x: x.created_at, reverse=True)
+            photos=photos.order_by('-created_at')
         elif filter=='popular':
-            photos=sorted(photos, key=lambda x: x.likes.count(), reverse=True)
+            photos=photos.annotate(like_count=Count('like')).order_by('-like_count')
         context['photos']=photos
         return context
    
