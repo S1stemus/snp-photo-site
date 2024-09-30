@@ -1,25 +1,30 @@
-<ul> 
-    <li> 
-        <p>{{ comment.user }}</p> 
-        <p>{{ comment.comment }}</p>
-        <form action="{% url 'comment' comment.pk %}" method="post">    
-            {% csrf_token %}
-            <input type="hidden" name="content_type" value="comment">
-            <input type="text" name="comment">
-            <button type="submit" >Ответить</button>
-        </form>              
-    </li> 
+<ul class="list-unstyled">
+    <li class="mb-4">
+        <div class="card p-3">
+            <img src="{{ comment.user.avatar.url }}" class="img-fluid  me-2 " alt="Аватар" style="width: 40px; height: 40px;"/>
+            <p class="fw-bold">{{ comment.user }}</p>
+            <p>{{ comment.comment }}</p>
+            {% if user.is_authenticated %}
+                <form action="{% url 'comment' comment.pk %}" method="post" class="mt-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="content_type" value="comment">
+                    <div class="input-group">
+                        <input type="text" name="comment" class="form-control" placeholder="Ваш ответ..." required>
+                        <button type="submit" class="btn btn-primary">Ответить</button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
 
-    {% if comment.model_relation.all %}
-        <ul> 
-            {% for com in comment.model_relation.all %}
-            <li>
-                {% include 'comment.html' with comment=com%}
-            </li>
-            {% endfor %}
-        </ul>
-    {%else%}
-        <p>Нет комментариев</p>
-    {% endif %}    
+        {% if comment.model_relation.all %}
+            <ul class="list-unstyled ms-4 mt-3">
+                {% for com in comment.model_relation.all %}
+                    <li>
+                        {% include 'comment.html' with comment=com %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </li>
 </ul>
 

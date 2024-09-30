@@ -1,48 +1,54 @@
 {% extends "base.html" %}
 {% load static %}
-{%block title%}Photo List{%endblock%}  
-{%block content%}
-<div class ="post-container">
-    <form action="{% url 'photo_list' %}" method="get">
+{% block title %}Photo List{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <form action="{% url 'photo_list' %}" method="get" class="mb-4">
         {% csrf_token %}
-        <select name="filter", onchange="this.form.submit()">
+        <select name="filter" onchange="this.form.submit()" class="form-select">
             <option disabled selected>Filter</option>
             <option value="old">Old</option>
             <option value="new">New</option>
             <option value="popular">Popular</option>
         </select>
-
-        
     </form>
+    
+    <div class="row">
         {% for photo in photos %}
-                <div class="post">
-
-                    <h1>{{ photo.user}}<h1> 
-                    <h1>{{photo.caption}}</h1>
-                    <a href='{% url 'photo_page' photo.id %}'>
-                        <img src={{photo.photo.url}} alt="нет фото"/>
-                    </a>
-                    <div class="coment-and-like-container">
-                        <div class="left-element">
-                            <img src="{% static 'images/chat.png' %} " class="like-comment-image"/>
-                            {{photo.model_relation.count}}
+        <div class="col-md-12 mb-4 text-center">
+            <div class="card">
+                <a href='{% url 'photo_page' photo.id %}'>
+                    <img src="{{ photo.photo.url }}" alt="нет фото" class="card-img-top mx-auto" style="max-width: 100%; height: auto;">
+                </a>
+                <div class="card-body">
+                    <h5 class="card-title">{{ photo.user }}</h5>
+                    <p class="card-text">{{ photo.caption }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'images/chat.png' %}" class="like-comment-image me-2" alt="comments" />
+                            <span>{{ photo.model_relation.count }}</span>
                         </div>
-                        <div class="right-element">
-                            {% if user.is_authenticated%}
-                                <form action="{% url 'like' photo.pk  %}" method="post">
-                                    {% csrf_token %}
-                                    <button type="submit" >
-                                        <img src="{% static 'images/heart.png' %}" class="like-comment-image"/>
-                                        {{photo.likes.count}}
-                                    </button>
-                                </form>
-                            {%else%}
-                            <img src="{% static 'images/heart.png' %}" class="like-comment-image"/>
-                            {{photo.likes.count}}
-                            {%endif%}
+                        <div>
+                            {% if user.is_authenticated %}
+                            <form action="{% url 'like' photo.pk %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link p-0">
+                                    <img src="{% static 'images/heart.png' %}" class="like-comment-image" alt="likes" />
+                                    {{ photo.likes.count }}
+                                </button>
+                            </form>
+                            {% else %}
+                            <span>
+                                <img src="{% static 'images/heart.png' %}" class="like-comment-image" alt="likes" />
+                                {{ photo.likes.count }}
+                            </span>
+                            {% endif %}
                         </div>
                     </div>
-                </div> 
+                </div>
+            </div>
+        </div>
         {% endfor %}
+    </div>
 </div>
-{%endblock%}
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    
+    <div class ="post-container">
+        <div class="post">
+            <h1>{{ user.username }}</h1>
+            <img src={{user.avatar.url}} alt="нет фото"/>
+        </div>
+        <h1>Photos</h1>
+        <form action="{% url 'user_page' user.id %}" method="get">
+            {% csrf_token %}
+            <select name="filter", onchange="this.form.submit()">
+                <option disabled selected>Filter</option>
+                <option value="old">Old</option>
+                <option value="new">New</option>
+                <option value="popular">Popular</option>
+            </select>       
+        </form>
+            {% for photo in photos %}
+                    <div class="post">
+    
+                        <h1>{{ photo.user}}<h1> 
+                        <h1>{{photo.caption}}</h1>
+                        <a href='{% url 'photo_page' photo.id %}'>
+                            <img src={{photo.photo.url}} alt="нет фото"/>
+                        </a>
+                        <div class="coment-and-like-container">
+                            <div class="left-element">
+                                <img src="{% static 'images/chat.png' %} " class="like-comment-image"/>
+                                {{photo.model_relation.count}}
+                            </div>
+                            <div class="right-element">
+                                {% if user.is_authenticated%}
+                                    <form action="{% url 'like' photo.pk  %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" >
+                                            <img src="{% static 'images/heart.png' %}" class="like-comment-image"/>
+                                            {{photo.likes.count}}
+                                        </button>
+                                    </form>
+                                {%else%}
+                                <img src="{% static 'images/heart.png' %}" class="like-comment-image"/>
+                                {{photo.likes.count}}
+                                {%endif%}
+                            </div>
+                        </div>
+                    </div> 
+            {% endfor %}
+    </div>
+{% endblock %}

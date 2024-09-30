@@ -1,9 +1,28 @@
-{%extends "base.html"%}
-{%block content%}
-    <h1>LOGIN</h1>
-    <form action={% url 'login' %} method="post">
-        {% csrf_token %}
-        {{ form }}
-        <button type="submit">Login</button>
-    </form>
-{%endblock%}
+{% extends "base.html" %} 
+
+{% block content %} 
+    <div class="container d-flex flex-column align-items-center">
+        <h1>Login</h1> 
+        <form action="{% url 'login' %}" method="post" class="w-50"> 
+            {% csrf_token %} 
+             
+            <div class="mb-3"> 
+                {{ form.username.label }}   
+                {{ form.username }}    
+            </div> 
+            <div class="mb-3"> 
+                {{ form.password.label }}   
+                {{ form.password }}  
+            </div> 
+             
+            {% if form.non_field_errors %} 
+                <div class="alert alert-danger"> 
+                    {{ form.non_field_errors }} 
+                </div> 
+            {% endif %} 
+             
+            <button type="submit" class="btn btn-primary">Login</button> 
+        </form> 
+        <p>Don't have an account? <a href="{% url 'register' %}">Sign up here</a>.</p> 
+    </div>
+{% endblock %}

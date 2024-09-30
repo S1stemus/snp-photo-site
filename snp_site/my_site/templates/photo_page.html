@@ -1,29 +1,34 @@
-{%extends "base.html"%}
-{%block content%}
+{% extends "base.html" %}
+{% block content %}
 {% load static %}
-<div class ="post-container">
-    <div class="post">
-    <h1>{{ photo.user}}</h1> 
-    <h1>{{photo.caption}}</h1>
-    <img src={{photo.photo.url}} alt="нет фото"/>
-    {% if user.is_authenticated%}
-        <form action="{% url 'comment' photo.pk  %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="content_type" value="photo">
-            <input type="text" name="comment">
-            <button type="submit" >Отправить</button>
-        </form>
-        <form action="{% url 'like' photo.pk  %}" method="post">
-            {% csrf_token %}
-            <button type="submit" >
-                <img src="{% static 'images/heart.png' %}" class="like-comment-image"/>
-                {{photo.likes.count}}
-            </button>
-        </form>
-        {%endif%}
-        {%for comment in photo.model_relation.all%}
-            {%include 'comment.html' with comment=comment%}
-        {%endfor%}
+<div class="post-container">
+    <div class="post card p-4 mb-4">
+        <h1 class="fw-bold">{{ photo.user }}</h1>
+        <h2 class="mt-2">{{ photo.caption }}</h2>
+        <img src="{{ photo.photo.url }}" alt="нет фото" class="img-fluid my-3"/>
+        
+        {% if user.is_authenticated %}
+            <form action="{% url 'comment' photo.pk %}" method="post" class="mb-3">
+                {% csrf_token %}
+                <input type="hidden" name="content_type" value="photo">
+                <div class="input-group">
+                    <input type="text" name="comment" class="form-control" placeholder="Ваш комментарий..." required>
+                    <button type="submit" class="btn btn-primary">Отправить</button>
+                </div>
+            </form>
+            <form action="{% url 'like' photo.pk %}" method="post" class="mb-3">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger">
+                    <img src="{% static 'images/heart.png' %}" class="like-comment-image" alt="Лайк"/> 
+                    {{ photo.likes.count }}
+                </button>
+            </form>
+        {% endif %}
+
+        <h3>Комментарии:</h3>
+        {% for comment in photo.model_relation.all %}
+            {% include 'comment.html' with comment=comment %}
+        {% endfor %}
     </div>
 </div>
-{%endblock%}
+{% endblock %}

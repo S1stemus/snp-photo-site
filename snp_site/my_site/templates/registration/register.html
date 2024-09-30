@@ -3,7 +3,9 @@
     <h1>REGISTER</h1>
     <form action={% url 'register' %} method="post">
         {% csrf_token %}
-        {{ form }}
+        <div class="mb-3 ">
+            {{ form }}
+        </div>
         <button type="submit">Register</button>
     </form>
 {%endblock%}
