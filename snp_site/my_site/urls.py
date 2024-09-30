@@ -8,6 +8,7 @@ from my_site.views.photo_page import PhotoPageView
 from my_site.views.photo_list import PhotoListView
 from my_site.views.like_view import LikeView
 from my_site.views.comment_view import CommentView
+from my_site.views.user_view import UserView
 
 urlpatterns = [ 
 
@@ -17,5 +18,6 @@ urlpatterns = [
     path('users/',include('django.contrib.auth.urls')),
     path('register/', RegisterView.as_view(), name="register"),
     path('like/<pk>/', LikeView.as_view(), name="like"),
-    path('comments/create/<pk>/', CommentView.as_view(), name="comment"),    
+    path('comments/create/<pk>/', CommentView.as_view(), name="comment"), 
+    path('users/page/<int:pk>/', UserView.as_view(), name="user_page"),   
 ]

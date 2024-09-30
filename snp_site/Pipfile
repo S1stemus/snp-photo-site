@@ -9,6 +9,7 @@ environ = "*"
 split-settings = "*"
 django-allauth = "*"
 django-viewflow = "*"
+djangorestframework = "*"
 
 [dev-packages]
 
