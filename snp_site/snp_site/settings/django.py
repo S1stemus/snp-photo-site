@@ -126,7 +126,7 @@ SOCIALACCOUNT_PROVIDERS = {
             'client_id': '237313609638-6orimg6h2nh03aiaiqr2giu3kapp2kqr.apps.googleusercontent.com',
             'secret': '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',
         },
-        'SCOPE': ['profile', 'email'],
+        'SCOPE': ['profile', 'email', ],
         'AUTH_PARAMS': {'access_type': 'online'},
         'METHOD': 'oauth2',
         'VERIFIED_EMAIL': True
