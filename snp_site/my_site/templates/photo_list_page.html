@@ -15,7 +15,7 @@
     
     <div class="row">
         {% for photo in photos %}
-        <div class="col-md-12 mb-4 text-center">
+        <div class="col-md-4 mb-4 text-center">
             <div class="card">
                 <a href='{% url 'photo_page' photo.id %}'>
                     <img src="{{ photo.photo.url }}" alt="нет фото" class="card-img-top mx-auto" style="max-width: 100%; height: auto;">

@@ -3,6 +3,7 @@ from django.views import View
 from models_app.models import Photo
 from models_app.models import Like
 
+
 class LikeView(View):
     def post(self, request, pk):
         photo = Photo.objects.get(pk=pk)
