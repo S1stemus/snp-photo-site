@@ -14,5 +14,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.github',
     'rest_framework',
+    'drf_spectacular', 
 
 ]

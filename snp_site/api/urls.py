@@ -1,4 +1,4 @@
-from snp_site.api.views.photo import RetreivePhotoView
+from api.views.photo import RetreivePhotoView
 from django.urls import path
 
 

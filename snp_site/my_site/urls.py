@@ -1,7 +1,6 @@
-from atexit import register
+
 from django.urls import path
 from my_site.views.main_page import MainPageView
-from django.conf import settings
 from django.urls import include
 from my_site.views.register_view import RegisterView
 from my_site.views.photo_page import PhotoPageView
