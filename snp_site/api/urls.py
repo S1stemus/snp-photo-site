@@ -1,7 +1,6 @@
 from api.views.photo import RetreivePhotoView
 from api.views.comment import RetreiveCommentView
 from django.urls import path
-
 from api.views.comment import RetreiveCommentView
 
 

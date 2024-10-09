@@ -15,8 +15,7 @@ class RetreivePhotoView(APIView):
         description='Возвращает фотографию по id',
         responses={
             200: PhotoSerializer
-        },
-        request=PhotoSerializer
+        }
     )
     def get(self, request, *args, **kwargs):
         outcome=ServiceOutcome(ShowPhotoService,{'id':kwargs['id']} )
