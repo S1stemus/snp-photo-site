@@ -10,11 +10,13 @@ from drf_spectacular.utils import extend_schema
 class RetreivePhotoView(APIView):
 
     @extend_schema(
+        tags=['Фотографии'],
         summary='Возвращает фотографию по id',
         description='Возвращает фотографию по id',
         responses={
             200: PhotoSerializer
-        }
+        },
+        request=PhotoSerializer
     )
     def get(self, request, *args, **kwargs):
         outcome=ServiceOutcome(ShowPhotoService,{'id':kwargs['id']} )
