@@ -2,6 +2,7 @@
 from service_objects.services import ServiceWithResult
 from django import forms
 from models_app.models import Comment
+from service_objects.errors import NotFound 
 
 class RetrieveCommentsByIdService(ServiceWithResult):
     id = forms.IntegerField(required=True, min_value=1)
@@ -15,8 +16,11 @@ class RetrieveCommentsByIdService(ServiceWithResult):
         return self
 
     def _comment(self):
-        return Comment.objects.get(id=self.cleaned_data['id'])
+        try:
+            return Comment.objects.get(photo=self.cleaned_data['id'])
+        except Comment.DoesNotExist:
+            return None
 
     def _validate_comment_id(self):
-        if not Comment.objects.filter(id=self.cleaned_data['id']).exists() or not self.cleaned_data['id']:
-            self.add_error('id', 'Комментарий не найден или не дан')
+        if not Comment.objects.filter(id=self.cleaned_data['id']).exists() :
+            self.add_error('id',NotFound(message = f'Объект {self.cleaned_data["id"]} не найден '))

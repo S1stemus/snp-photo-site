@@ -1,3 +1,4 @@
+from requests import delete
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from service_objects.services import ServiceOutcome
@@ -5,9 +6,12 @@ from api.serializers.photo_serializer import PhotoSerializer
 from api.services.photo.show import ShowPhotoService
 from models_app.models.photo.models import Photo
 from drf_spectacular.utils import extend_schema
+from api.services.photo.delete import DeletePhotoService
 
 
 class RetreivePhotoView(APIView):
+
+    
 
     @extend_schema(
         tags=['Фотографии'],
@@ -16,11 +20,27 @@ class RetreivePhotoView(APIView):
         responses={
             200: PhotoSerializer
         }
+        
     )
     def get(self, request, *args, **kwargs):
         outcome=ServiceOutcome(ShowPhotoService,{'id':kwargs['id']} )
         return Response(PhotoSerializer(outcome.result).data)
     
-    # def delete()
+    @extend_schema(
+        tags=['Фотографии'],
+        summary='Удаляет фотографию по id',
+        description='Удаляет фотографию по id',
+        responses={
+            200: PhotoSerializer
+        }
+    )    
+    def delete(self, request, *args, **kwargs):
+        outcome=ServiceOutcome(DeletePhotoService,{'id':kwargs['id']} )
+        return Response(PhotoSerializer(outcome.result).data)
+    
+   
+    
+
+    
 
 
