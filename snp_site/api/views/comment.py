@@ -68,6 +68,6 @@ class RetreiveCommentView(APIView):
         request=CommentUpdateSerializer
     )
     def put(self, request, *args, **kwargs):
-        outcome=ServiceOutcome(UpdateCommentService,{'id':kwargs['id']} | request.data, request.FILES, )
+        outcome=ServiceOutcome(UpdateCommentService,{'id':kwargs['id'],'current_user':request.user} | request.data, request.FILES, )
         return Response(CommentUpdateSerializer(outcome.result).data, status=status.HTTP_200_OK)
     

@@ -68,6 +68,24 @@ class ListCreatePhotoView(APIView):
                 description='Количество элементов на странице',
                 default=10
             ),
+            OpenApiParameter(
+                name='sort_field',
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Поле сортировки',
+                default='created_at'
+            ),
+            OpenApiParameter(
+                name='sort_direction',
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Направление сортировки',
+                default='desc'
+                
+                )
+           
             
         ]
         
