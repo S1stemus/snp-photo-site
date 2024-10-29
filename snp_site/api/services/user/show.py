@@ -4,7 +4,7 @@ from django import forms
 from service_objects.fields import ModelField
 
 class UserShowService(ServiceWithResult):
-    user = forms.IntegerField(required=True, min_value=1)
+    user_id = forms.IntegerField(required=True, min_value=1)
     current_user=ModelField(User, required=False)
 
     custom_validations = [
@@ -16,11 +16,11 @@ class UserShowService(ServiceWithResult):
         if self.is_valid():
             self.result = self._user_id
         return self
-        
+    @property   
     def _user_id(self):    
-        user=User.objects.get(id=self.cleaned_data['user'])
+        user=User.objects.get(id=self.cleaned_data['user_id'])
         print(user.username)        
         return user
     def _validate_user_id(self):
-        if not User.objects.filter(id=self.cleaned_data['user']).exists():
-            self.add_error('user', 'Пользователь не найден')
+        if not User.objects.filter(id=self.cleaned_data['user_id']).exists():
+            self.add_error('user_id', 'Пользователь не найден')

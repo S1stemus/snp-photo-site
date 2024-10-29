@@ -3,7 +3,9 @@ from service_objects.services import ServiceOutcome
 from rest_framework.views import APIView
 from api.serializers.user.user_serializer import UserSerializer
 from drf_spectacular.utils import extend_schema
-from api.services.user.show import UserShowService
+from api.services.user.show import *
+from api.services.user.user_photo import UserPhotoService
+from api.serializers.photos.photo_serializer import PhotoSerializer
 
 class UserShowView(APIView):
 
@@ -14,7 +16,8 @@ class UserShowView(APIView):
         responses={200: UserSerializer}
     )
     def get(self, request, *args, **kwargs):
-        outcome=ServiceOutcome(UserShowService,{'user':kwargs['id']},{'current_user':request.user} )
+        outcome=ServiceOutcome(UserShowService,{'user_id':kwargs['id']},{'current_user':request.user} )
+        print(outcome.result)
         return Response(UserSerializer(outcome.result).data)
 class ListUserPhotoView(APIView):
 
@@ -22,8 +25,10 @@ class ListUserPhotoView(APIView):
         tags=['Пользователи'],
         summary='Возвращает все фото пользователя',
         description='Возвращает все фото пользователя',
-        responses={200: UserSerializer}
+        responses={200: PhotoSerializer}
     )
     def get(self, request, *args, **kwargs):
-        outcome=ServiceOutcome(UserShowService,{'user':kwargs['id']},{'current_user':request.user} )
-        return Response(UserSerializer(outcome.result,many=True).data)
+        breakpoint()
+        outcome=ServiceOutcome(UserPhotoService,{'user_id':kwargs['id']},{'current_user':request.user})
+        print(outcome.result)
+        return Response(PhotoSerializer(outcome.result,many=True).data)

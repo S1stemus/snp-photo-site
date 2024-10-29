@@ -5,7 +5,7 @@ from api.serializers.likes.like_serializer import LikeSerializer
 from drf_spectacular.utils import extend_schema
 from api.services.like.create import CreateLikeService
 from rest_framework.permissions import IsAuthenticated
-from api.serializers.likes.like_post_serializer import LikePostSerializer
+from api.serializers.likes.post import LikePostSerializer
 from rest_framework import status
 
 class LikePostView(APIView):
