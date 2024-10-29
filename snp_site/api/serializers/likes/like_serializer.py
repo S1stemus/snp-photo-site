@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from models_app.models import Like
-class LikePostSerializer(serializers.ModelSerializer):
+
+class LikeSerializer(serializers.ModelSerializer):
+   
     class Meta:
         model = Like
-        fields = ['photo', 'user']
+        fields = ['photo_id', 'user_id', 'id']
+        

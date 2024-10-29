@@ -2,6 +2,8 @@ from service_objects.services import ServiceWithResult
 from django import forms
 from models_app.models import Photo
 from service_objects.errors import NotFound
+from rest_framework.response import Response
+from rest_framework import status
 
 class DeletePhotoService(ServiceWithResult):
 
@@ -19,7 +21,9 @@ class DeletePhotoService(ServiceWithResult):
     @property
     def _photo(self):
         try:
-            return Photo.objects.delete(id=self.cleaned_data['id'])
+           photo=Photo.objects.get(id=self.cleaned_data['id'])
+           photo.delete()
+           return (photo)
         except Photo.DoesNotExist:
             return None
 
