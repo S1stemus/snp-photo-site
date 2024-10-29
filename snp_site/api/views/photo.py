@@ -1,3 +1,4 @@
+from tkinter.filedialog import Open
 from requests import delete
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -14,13 +15,19 @@ from rest_framework.permissions import AllowAny
 from api.services.photo.list import ListPhotoService
 from api.services.photo.create import CreatePhotoService
 from rest_framework import status
+from rest_framework.pagination import LimitOffsetPagination
+from utils.pagination.custom_pagination import CustomPagination
+from drf_spectacular.utils import OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 
 
 class ListCreatePhotoView(APIView):
 
-    permission_classes = [IsAuthenticated]
+    
 
+    permission_classes = [IsAuthenticated]
+    
     @extend_schema(
         tags=['Фотографии'],
         summary='Создает фотографию',
@@ -30,24 +37,58 @@ class ListCreatePhotoView(APIView):
             200: PhotoSerializer
         }
     )
-
     def post(self, request, *args, **kwargs):
         outcome=ServiceOutcome(CreatePhotoService, {'current_user':request.user}, request.FILES)
         return Response(PhotoSerializer(outcome.result).data)
     
-
+    
     permission_classes = [AllowAny]
+
     @extend_schema(
         tags=['Фотографии'],
         summary='Возвращает все фотографии',
         description='Возвращает все фотографии',
         responses={
             200: PhotoSerializer
-        }
+        },
+        parameters=[
+            OpenApiParameter(
+                name='page',
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Номер страницы',
+                default=1
+            ),
+            OpenApiParameter(
+                name='per_page',
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Количество элементов на странице',
+                default=10
+            ),
+            
+        ]
+        
     )
     def get(self, request, *args, **kwargs):
-        outcome=ServiceOutcome(ListPhotoService,{} )
-        return Response(PhotoSerializer(outcome.result,many=True).data)
+
+        outcome=ServiceOutcome(ListPhotoService,request.query_params.dict())
+        print(outcome.result)
+        return Response(
+        {
+            "pagination": CustomPagination(
+                outcome.result,
+                current_page=outcome.service.cleaned_data["page"],
+                per_page=outcome.service.cleaned_data["per_page"],
+            ).to_json(),
+            "results": PhotoSerializer(
+                outcome.result.object_list, many=True
+            ).data,
+        },
+    status=status.HTTP_200_OK,
+)
 
 
 class RetreivePhotoView(APIView):
