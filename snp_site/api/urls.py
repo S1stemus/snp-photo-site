@@ -17,5 +17,6 @@ urlpatterns=[
     path('photos/', ListCreatePhotoView.as_view()),
     path('users/<int:id>/', UserShowView.as_view()),
     path('users/photos/<int:id>/', ListUserPhotoView.as_view()),
+    path('users/register',RegisterUserView.as_view())
  
 ]

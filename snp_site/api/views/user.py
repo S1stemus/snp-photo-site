@@ -7,6 +7,8 @@ from api.services.user.show import *
 from api.services.user.user_photo import UserPhotoService
 from api.serializers.photos.photo_serializer import PhotoSerializer
 from api.services.user.update import UserUpdateService
+from api.services.user.create import CreateUserService
+from api.serializers.user.register import UserRegisterSerializer
 
 class UserShowView(APIView):
 
@@ -41,3 +43,16 @@ class ListUserPhotoView(APIView):
     def get(self, request, *args, **kwargs):
         outcome=ServiceOutcome(UserPhotoService,{'user_id':kwargs['id'],'current_user':request.user},request.FILES)
         return Response(PhotoSerializer(outcome.result,many=True).data)
+    
+
+class RegisterUserView(APIView):
+    @extend_schema(
+        tags=['Пользователи'],
+        summary='Создает пользователя ',
+        description='Создает пользователя',
+        responses = {200: UserSerializer},
+        request = UserRegisterSerializer
+    )
+    def post(self, request, *args, **kwargs):
+        outcome=ServiceOutcome(CreateUserService(),request.data,request.FILES)
+        return outcome.result
