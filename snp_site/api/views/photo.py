@@ -38,7 +38,7 @@ class ListCreatePhotoView(APIView):
         }
     )
     def post(self, request, *args, **kwargs):
-        outcome=ServiceOutcome(CreatePhotoService, {'current_user':request.user}, request.FILES)
+        outcome=ServiceOutcome(CreatePhotoService, {'current_user':request.user}|request.data, request.FILES)
         return Response(PhotoSerializer(outcome.result).data)
     
     
