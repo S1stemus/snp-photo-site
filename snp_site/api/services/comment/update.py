@@ -36,4 +36,4 @@ class UpdateCommentService(ServiceWithResult):
             self.add_error('id',NotFound(message = f'Объект {self.cleaned_data["id"]} не найден '))
     def _validate_user(self):
         if self.cleaned_data['current_user'].id != Comment.objects.get(id=self.cleaned_data['id']).user.id:
-            self.add_error('current_user',NotFound(message = f'Вы не можете редактировать этот комментарий'))
+            self.add_error('current_user',NotFound(message = f'пользователь {self.cleaned_data["current_user"]} не может редактировать этот комментарий'))
