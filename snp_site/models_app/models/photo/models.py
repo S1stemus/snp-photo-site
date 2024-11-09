@@ -2,13 +2,14 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
 from ..comment import Comment
 from models_app.models.photo.fsm import State, Flow
+from django.core.validators import FileExtensionValidator
 
 
 
 
 class Photo(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE,null=False,blank=False,verbose_name='Пользователь',related_name='photos',related_query_name='photo')
-    photo = models.ImageField(upload_to='images/', verbose_name="Фото", null=False,blank=False)
+    photo = models.ImageField(upload_to='images/', verbose_name="Фото", null=False,blank=False,validators=[FileExtensionValidator(['png', 'jpg', 'jpeg'])])
     caption = models.CharField(max_length=127, verbose_name="Описание" ,null=False,blank=False) 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
