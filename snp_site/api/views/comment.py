@@ -14,6 +14,9 @@ from api.services.comment.update import UpdateCommentService
 from api.services.comment.create import CreateCommentService
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+from utils.pagination.custom_pagination import CustomPagination
+from drf_spectacular.utils import OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 class PostCommentView(APIView):
 
@@ -40,11 +43,50 @@ class RetreiveCommentView(APIView):
         description='Возвращает комментарии по id',
         responses={
             200: CommentListSerializer
-        }
+        },
+        parameters=[
+           OpenApiParameter(
+                name='page',
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Номер страницы',
+                default=1
+            ),
+            OpenApiParameter(
+                name='per_page',
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Количество элементов на странице',
+                default=10
+            ),
+            OpenApiParameter(
+                name='sort_by',
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Поле сортировки',
+                default='created_at'
+            ),
+            
+        ]
     )
     def get(self, request,*args, **kwargs):
-        outcome=ServiceOutcome(RetrieveCommentsByIdService,{'id':kwargs['id']} )
-        return Response(CommentShowSerializer(outcome.result,many=True).data, status=status.HTTP_200_OK)
+        outcome=ServiceOutcome(RetrieveCommentsByIdService,{'id':kwargs['id']} )        
+        return Response(
+        {
+            "pagination": CustomPagination(
+                outcome.result,
+                current_page=outcome.service.cleaned_data["page"],
+                per_page=outcome.service.cleaned_data["per_page"],
+            ).to_json(),
+            "results": CommentShowSerializer(
+                outcome.result.object_list, many=True
+            ).data,
+        },
+    status=status.HTTP_200_OK,
+)
     
     @extend_schema(
         tags=['Комментарии'],
@@ -68,6 +110,7 @@ class RetreiveCommentView(APIView):
         request=CommentUpdateSerializer
     )
     def put(self, request, *args, **kwargs):
-        outcome=ServiceOutcome(UpdateCommentService,{'id':kwargs['id'],'current_user':request.user} | request.data, request.FILES, )
+        outcome=ServiceOutcome(UpdateCommentService,{'id':kwargs['id'],'current_user':request.user} | request.data )
         return Response(CommentUpdateSerializer(outcome.result).data, status=status.HTTP_200_OK)
     
+
