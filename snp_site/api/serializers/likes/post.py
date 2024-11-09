@@ -3,4 +3,4 @@ from models_app.models import Like
 class LikePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Like
-        fields = ['photo']
+        fields = ['photo_id', 'user_id']
