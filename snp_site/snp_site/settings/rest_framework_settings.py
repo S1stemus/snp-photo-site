@@ -6,7 +6,8 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
-    ),    
+    ),  
+    'DEFAULT_PAGINATION_CLASS': 'utils.pagination.custom_pagination.CustomPagination',  
     'PAGE_SIZE': 2
     
 }
