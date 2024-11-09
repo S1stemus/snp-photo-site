@@ -12,7 +12,7 @@ class ListPhotoService(ServiceWithResult):
     page = forms.IntegerField(min_value=1, required=False)
     per_page = forms.IntegerField(min_value=1, required=False)
 
-    sort_field=forms.ChoiceField(choices=(('created_at', 'created_at'),('popularity', 'popularity')), required=False)
+    sort_field=forms.ChoiceField(choices=(('created_at', 'created_at'),('popularity', 'popularity'),('comment_count', 'comment_count')), required=False)
     sort_direction=forms.ChoiceField(choices=(('asc', 'asc'), ('desc', 'desc')), required=False)
 
 
@@ -48,6 +48,11 @@ class ListPhotoService(ServiceWithResult):
                 photo = photo.order_by('created_at')
             else:
                 photo = photo.order_by('-created_at')
+        elif self.cleaned_data['sort_field'] == 'comment_count':
+            if self.cleaned_data['sort_direction'] == 'asc':
+                photo = photo.annotate(comment_count=Count('model_relation')).order_by('comment_count')
+            else:
+                photo = photo.annotate(comment_count=Count('model_relation')).order_by('-comment_count')
 
         return photo
         
