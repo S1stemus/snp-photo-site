@@ -38,7 +38,8 @@ class ListCreatePhotoView(APIView):
         }
     )
     def post(self, request, *args, **kwargs):
-        outcome=ServiceOutcome(CreatePhotoService, {'current_user':request.user}|request.data, request.FILES)
+        breakpoint()
+        outcome=ServiceOutcome(CreatePhotoService, {'current_user':request.user}|request.data.dict(), request.FILES)
         return Response(PhotoSerializer(outcome.result).data)
     
     
@@ -152,7 +153,7 @@ class RetreivePhotoView(APIView):
         request=PhotoPostSerializer
     )    
     def put(self, request, *args, **kwargs):
-        outcome=ServiceOutcome(UpdatePhotoService,{'id':kwargs['id'],'current_user':request.user} | request.data, request.FILES,)
+        outcome=ServiceOutcome(UpdatePhotoService,{'id':kwargs['id'],'current_user':request.user} | request.data.dict(), request.FILES,)
         return Response(PhotoSerializer(outcome.result).data)
     
    

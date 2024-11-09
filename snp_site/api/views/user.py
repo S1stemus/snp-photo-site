@@ -29,7 +29,7 @@ class UserShowView(APIView):
         request = UserSerializer
     )
     def put(self, request, *args, **kwargs):
-        outcome=ServiceOutcome(UserUpdateService,{'user_id':kwargs['id'],'current_user':request.user} |request.data,request.FILES)
+        outcome=ServiceOutcome(UserUpdateService,{'user_id':kwargs['id'],'current_user':request.user} |request.data.dict(),request.FILES)
         return Response(UserSerializer(outcome.result).data)
 
 class ListUserPhotoView(APIView):
@@ -54,5 +54,5 @@ class RegisterUserView(APIView):
         request = UserRegisterSerializer
     )
     def post(self, request, *args, **kwargs):
-        outcome=ServiceOutcome(CreateUserService(),request.data,request.FILES)
+        outcome=ServiceOutcome(CreateUserService(),request.data.dict(),request.FILES)
         return outcome.result
