@@ -14,6 +14,7 @@ django-service-objects = { git = "https://git.snpdev.ru/saltpepper/django-servic
 drf-spectacular = "*"
 djangorestframework-simplejwt = "*"
 django-cors-headers = "*"
+channels = "*"
 
 [dev-packages]
 

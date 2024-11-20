@@ -64,6 +64,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'snp_site.wsgi.application'
 
+ASGI_APPLICATION = 'snp_site.asgi.application'
+
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

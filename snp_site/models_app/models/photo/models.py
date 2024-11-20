@@ -10,7 +10,9 @@ from django.core.validators import FileExtensionValidator
 class Photo(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE,null=False,blank=False,verbose_name='Пользователь',related_name='photos',related_query_name='photo')
     photo = models.ImageField(upload_to='images/', verbose_name="Фото", null=False,blank=False,validators=[FileExtensionValidator(['png', 'jpg', 'jpeg'])])
-    caption = models.CharField(max_length=127, verbose_name="Описание" ,null=False,blank=False) 
+    # prev_photo = models.ImageField(upload_to='images/', verbose_name="Предыдущее фото", null=True,blank=False,validators=[FileExtensionValidator(['png', 'jpg', 'jpeg'])])
+    description = models.CharField(max_length=127, verbose_name="Описание" ,null=False,blank=False) 
+    # prev_description = models.CharField(max_length=127, verbose_name="Предыдущее описание" ,null=True,blank=False) 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     model_relation=GenericRelation(Comment)
