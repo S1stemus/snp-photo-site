@@ -24,9 +24,9 @@ from drf_spectacular.types import OpenApiTypes
 
 class ListCreatePhotoView(APIView):
 
-    
-
     permission_classes = [IsAuthenticated]
+
+    
     
     @extend_schema(
         tags=['Фотографии'],
@@ -38,7 +38,6 @@ class ListCreatePhotoView(APIView):
         }
     )
     def post(self, request, *args, **kwargs):
-        breakpoint()
         outcome=ServiceOutcome(CreatePhotoService, {'current_user':request.user}|request.data.dict(), request.FILES)
         return Response(PhotoSerializer(outcome.result).data)
     
@@ -111,8 +110,9 @@ class ListCreatePhotoView(APIView):
 
 
 class RetreivePhotoView(APIView):
+
     permission_classes = [AllowAny]
-     
+
     @extend_schema(
         tags=['Фотографии'],
         summary='Возвращает фотографию по id',
@@ -128,7 +128,9 @@ class RetreivePhotoView(APIView):
     
    
     
-    permission_classes = [IsAuthenticated]
+   
+
+
     @extend_schema(
         tags=['Фотографии'],
         summary='Удаляет фотографию по id',
@@ -138,6 +140,8 @@ class RetreivePhotoView(APIView):
         }
     )    
     def delete(self, request, *args, **kwargs):
+        self.permission_classes = [IsAuthenticated]  # Устанавливаем разрешения для этого метода
+        self.check_permissions(request)  # Проверяем разрешения
         outcome=ServiceOutcome(DeletePhotoService,{'id':kwargs['id']} )
         if outcome.result:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -153,6 +157,8 @@ class RetreivePhotoView(APIView):
         request=PhotoPostSerializer
     )    
     def put(self, request, *args, **kwargs):
+        self.permission_classes = [IsAuthenticated]  # Устанавливаем разрешения для этого метода
+        self.check_permissions(request)  # Проверяем разрешения
         outcome=ServiceOutcome(UpdatePhotoService,{'id':kwargs['id'],'current_user':request.user} | request.data.dict(), request.FILES,)
         return Response(PhotoSerializer(outcome.result).data)
     
