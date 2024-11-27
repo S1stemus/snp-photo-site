@@ -12,7 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 class MainPageView(CreateView,LoginRequiredMixin):
     model=Photo
     template_name="main_page.html"
-    fields = ['photo', 'caption']
+    fields = ['photo', 'description']
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)

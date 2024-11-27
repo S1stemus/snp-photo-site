@@ -11,7 +11,7 @@ from models_app.models.photo.fsm import State
 class CreatePhotoService(ServiceWithResult):
     
     photo = forms.ImageField(required=True)
-    caption = forms.CharField(max_length=127, required=False)    
+    description = forms.CharField(max_length=127, required=False)    
     current_user = ModelField(User)
 
     def process(self):
@@ -21,10 +21,9 @@ class CreatePhotoService(ServiceWithResult):
         return self
     @property
     def _create_photo(self):
-        breakpoint()
         photo = Photo.objects.create(user=self.cleaned_data['current_user'],
                                      photo=self.cleaned_data['photo'],
-                                     caption=self.cleaned_data['caption']
+                                     description=self.cleaned_data['description'],
                                      )
         return photo
 
