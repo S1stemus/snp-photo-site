@@ -8,6 +8,7 @@ from my_site.views.photo_list import PhotoListView
 from my_site.views.like_view import LikeView
 from my_site.views.comment_view import CommentView
 from my_site.views.user_view import UserView
+from my_site.views.jwt_view import JwtView
 
 urlpatterns = [ 
 
@@ -19,4 +20,5 @@ urlpatterns = [
     path('like/<pk>/', LikeView.as_view(), name="like"),
     path('comments/create/<pk>/', CommentView.as_view(), name="comment"), 
     path('users/page/<int:pk>/', UserView.as_view(), name="user_page"),   
+    path('jwt/',JwtView.as_view(), name="jwt"),
 ]
