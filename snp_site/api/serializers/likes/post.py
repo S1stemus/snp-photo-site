@@ -1,6 +1,8 @@
+from weakref import ref
 from rest_framework import serializers
 from models_app.models import Like
-class LikePostSerializer(serializers.ModelSerializer):
+class LikePostSerializer(serializers.Serializer):
+    photo_id = serializers.IntegerField()
     class Meta:
-        model = Like
-        fields = ['photo_id', 'user_id']
+        fields = ['photo_id']
+        ref_name='api_like_create_serializer'
