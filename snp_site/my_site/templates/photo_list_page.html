@@ -3,52 +3,116 @@
 {% block title %}Photo List{% endblock %}
 {% block content %}
 <div class="container mt-5">
-    <form action="{% url 'photo_list' %}" method="get" class="mb-4">
-        {% csrf_token %}
-        <select name="filter" onchange="this.form.submit()" class="form-select">
+    <form   class="mb-4">
+        <select name="filter" id="filter"  class="form-select">
             <option disabled selected>Filter</option>
-            <option value="old">Old</option>
-            <option value="new">New</option>
-            <option value="popular">Popular</option>
+            <option value="comment_count">Comment Count</option>
+            <option value="created_at">New</option>
+            <option value="popularity">Popular</option>
         </select>
     </form>
+    <form   class="mb-4">
+        <select name="filter" id="filter_direction"  class="form-select">
+            <option disabled selected>Filter</option>            
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+    </form>
+
     
-    <div class="row">
-        {% for photo in photos %}
-        <div class="col-md-4 mb-4 text-center">
-            <div class="card">
-                <a href='{% url 'photo_page' photo.id %}'>
-                    <img src="{{ photo.photo.url }}" alt="нет фото" class="card-img-top mx-auto" style="max-width: 100%; height: auto;">
-                </a>
-                <div class="card-body">
-                    <h5 class="card-title">{{ photo.user }}</h5>
-                    <p class="card-text">{{ photo.caption }}</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <img src="{% static 'images/chat.png' %}" class="like-comment-image me-2" alt="comments" />
-                            <span>{{ photo.model_relation.count }}</span>
-                        </div>
-                        <div>
-                            {% if user.is_authenticated %}
-                            <form action="{% url 'like' photo.pk %}" method="post" class="d-inline">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-link p-0">
-                                    <img src="{% static 'images/heart.png' %}" class="like-comment-image" alt="likes" />
-                                    {{ photo.likes.count }}
-                                </button>
-                            </form>
-                            {% else %}
-                            <span>
-                                <img src="{% static 'images/heart.png' %}" class="like-comment-image" alt="likes" />
-                                {{ photo.likes.count }}
-                            </span>
-                            {% endif %}
+    <div class="row" id='row'>
+       
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+
+
+<script>
+    async function likePhoto(id) {
+        const response = await fetch('http://127.0.0.1:8000/api/likes/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                photo_id: id
+            })
+        });
+        const data = await response.json();
+        return data;
+    }
+    async function fetchPhotos(page = 1, per_page = 10, sort_field = 'created_at', sort_direction = 'desc') {
+        const url = `http://127.0.0.1:8000/api/photos/?page=${page}&per_page=${per_page}&sort_direction=${sort_direction}&sort_field=${sort_field}`;
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        
+        // Очистка текущих фотографий
+        const row = document.getElementById('row');
+        row.innerHTML = '';
+
+        data.results.forEach(element => {
+            const card = document.createElement('div');
+            page_url='http://127.0.0.1:8000/photos/'+element.id
+            card.classList.add('col-md-4', 'mb-4', 'text-center');
+            card.innerHTML = 
+                `
+                <div class="card">
+                    <a id="photo-link${element.id}"  href='${page_url}'>
+                        <img src="${element.photo}" alt="нет фото" class="card-img-top mx-auto" style="max-width: 100%; height: auto;">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">${element.user}</h5>
+                        <p class="card-text">${element.description}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <img src="http://127.0.0.1:8000/static/images/chat.png" class="like-comment-image me-2" alt="comments" />
+                                <span>${element.comment_count}</span>
+                            </div>
+                            <div id="likes" >
+                                
+                                <img src="http://127.0.0.1:8000/static/images/heart.png" class="like-comment-image" alt="likes" />
+                                ${element.like_count}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-</div>
+                `
+            ;
+            token = localStorage.getItem('token');           
+            
+            document.getElementById('row').appendChild(card);
+                    
+        });       
+    }
+
+    
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchPhotos(); // Изначально загружаем фотографии
+
+        // Обработчик изменения фильтра
+        document.getElementById('filter').addEventListener('change', () => {
+            const sort_field = document.getElementById('filter').value;
+            const sort_direction = document.getElementById('filter_direction').value;
+            fetchPhotos(1, 10, sort_field, sort_direction);
+        });
+
+        document.getElementById('filter_direction').addEventListener('change', () => {
+            const sort_field = document.getElementById('filter').value;
+            const sort_direction = document.getElementById('filter_direction').value;
+
+
+            fetchPhotos(1, 10, sort_field, sort_direction);
+        });
+    });
+</script>
+
+
+
 {% endblock %}
