@@ -81,7 +81,7 @@ class RetreiveCommentView(APIView):
                 current_page=outcome.service.cleaned_data["page"],
                 per_page=outcome.service.cleaned_data["per_page"],
             ).to_json(),
-            "results": CommentShowSerializer(
+            "results": CommentListSerializer(
                 outcome.result.object_list, many=True
             ).data,
         },

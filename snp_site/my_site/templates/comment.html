@@ -26,5 +26,47 @@
             </ul>
         {% endif %}
     </li>
+</ul> 
+<script>
+
+</script>
+
+
+{% comment %} <ul class="list-unstyled" id='comment-list'>
+    <li class="mb-4" id='comment'>
+        <div class="card p-3" id='comment-card'>
+            <img id='avatar' style="width: 40px; height: 40px;"  class="img-fluid  me-2 "></img>
+            <p class="fw-bold" id='comment-user'></p>
+            <p id='comment-text'></p>
+        </div>  
+    </li>
 </ul>
+<script>
+    function getPhotoId{
+        const url = new URL(window.location.href); // Создаем объект URL
+        const pathSegments = url.pathname.split('/'); // Разделяем путь по символу '/'
+        const photoId = pathSegments[pathSegments.length - 2]; // Извлекаем предпоследний элемент
+        return photoId;
+    }
+    async function fetchComments(photo_id) {
+        const response = await fetch('http://127.0.0.1:8000/api/comments/', {
+    }
+    function renderComment(comment) {
+        const commentList = document.getElementById('comment-list');
+        const newComment = document.createElement('li');
+        newComment.classList.add('mb-4');
+        newComment.id = `comment-${comment.pk}`;
+        newComment.innerHTML = `
+            <div class="card p-3" id='comment-card'>
+                <img id='avatar' style="width: 40px; height: 40px;"  class="img-fluid  me-2 "></img>
+                <p class="fw-bold" id='comment-user'></p>
+                <p id='comment-text'></p>
+            </div>
+        `;
+        commentList.appendChild(newComment);
+    }
+</script>  {% endcomment %}
+
+
+
 
