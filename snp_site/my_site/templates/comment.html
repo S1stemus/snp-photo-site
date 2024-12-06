@@ -1,4 +1,4 @@
-<ul class="list-unstyled">
+{% comment %} <ul class="list-unstyled">
     <li class="mb-4">
         <div class="card p-3">
             <img src="{{ comment.user.avatar.url }}" class="img-fluid  me-2 " alt="Аватар" style="width: 40px; height: 40px;"/>
@@ -26,46 +26,67 @@
             </ul>
         {% endif %}
     </li>
-</ul> 
+</ul>  {% endcomment %}
+
+
+ {%block content%}
+    <div id="comment"></div>
+{%endblock%} 
+
+{% block js %}
 <script>
-
-</script>
-
-
-{% comment %} <ul class="list-unstyled" id='comment-list'>
-    <li class="mb-4" id='comment'>
-        <div class="card p-3" id='comment-card'>
-            <img id='avatar' style="width: 40px; height: 40px;"  class="img-fluid  me-2 "></img>
-            <p class="fw-bold" id='comment-user'></p>
-            <p id='comment-text'></p>
-        </div>  
-    </li>
-</ul>
-<script>
-    function getPhotoId{
+    function getPhotoId(){
         const url = new URL(window.location.href); // Создаем объект URL
         const pathSegments = url.pathname.split('/'); // Разделяем путь по символу '/'
         const photoId = pathSegments[pathSegments.length - 2]; // Извлекаем предпоследний элемент
         return photoId;
     }
     async function fetchComments(photo_id) {
-        const response = await fetch('http://127.0.0.1:8000/api/comments/', {
+        const response = await fetch('http://127.0.0.1:8000/api/comments/' + photo_id +'/?page=1&per_page=10', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        return data;
     }
-    function renderComment(comment) {
-        const commentList = document.getElementById('comment-list');
-        const newComment = document.createElement('li');
-        newComment.classList.add('mb-4');
-        newComment.id = `comment-${comment.pk}`;
-        newComment.innerHTML = `
-            <div class="card p-3" id='comment-card'>
-                <img id='avatar' style="width: 40px; height: 40px;"  class="img-fluid  me-2 "></img>
-                <p class="fw-bold" id='comment-user'></p>
-                <p id='comment-text'></p>
-            </div>
-        `;
-        commentList.appendChild(newComment);
+    function addComment(comment) {
+            ulcomment = document.createElement('ul');
+            ulcomment.classList.add('list-unstyled');
+            newComment = document.createElement('li');
+            newComment.classList.add('mb-4');
+            newComment.id = `comment-${comment.id}`;
+            newComment.innerHTML = `
+                <div class="card p-3" id='comment-card'>
+                    <img id='avatar' style="width: 40px; height: 40px;" src="${comment.user.avatar}"  class="img-fluid  me-2 "></img>
+                    <p class="fw-bold" id='comment-user'>${comment.user.username}</p>
+                    <p id='comment-text'>${comment.comment}</p>
+                </div>
+                `;
+            ulcomment.appendChild(newComment);
+            if (comment.comments.lenght > 0) {
+                comment.comments.forEach(comment => {
+                    addComment(comment);
+                });
+            }
+
     }
-</script>  {% endcomment %}
+    function renderComment() {
+        photo_id = getPhotoId();
+        data=fetchComments(photo_id);
+        data.then(comments => {
+            comments.results.forEach(comment => {
+                addComment(comment);
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderComment();
+    })
+</script>  
+{% endblock %}
 
 
 

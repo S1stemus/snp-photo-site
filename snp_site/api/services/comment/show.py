@@ -12,9 +12,6 @@ class RetrieveCommentsByIdService(ServiceWithResult):
     page = forms.IntegerField(min_value=1, required=False)
     per_page = forms.IntegerField(min_value=1, required=False)
 
-    sorted_by = forms.ChoiceField(choices=(('created_at_desc', 'created_at_desc'),('created_at_asc', 'created_at_asc')), required=False)
-
-    
 
     custom_validations = ['_validate_comment_id']
 
@@ -41,14 +38,7 @@ class RetrieveCommentsByIdService(ServiceWithResult):
 
     @property
     def _filtered_comments(self):
-        try:
-            if self.cleaned_data['sorted_by'] == 'created_at_desc':
-                return Comment.objects.filter(object_id=self.cleaned_data['id']).order_by('-created_at')
-            elif self.cleaned_data['sorted_by'] == 'created_at_asc':
-                return Comment.objects.filter(object_id=self.cleaned_data['id']).order_by('created_at')
-            return Comment.objects.filter(object_id=self.cleaned_data['id'])
-        except Comment.DoesNotExist:
-            return None
+            return Comment.objects.filter(object_id=self.cleaned_data['id'])          
 
     def _validate_comment_id(self):
         if not Comment.objects.filter(object_id=self.cleaned_data['id']).exists():

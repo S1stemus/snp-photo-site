@@ -61,15 +61,7 @@ class RetreiveCommentView(APIView):
                 description='Количество элементов на странице',
                 default=10
             ),
-            OpenApiParameter(
-                name='sort_by',
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.QUERY,
-                required=False,
-                description='Поле сортировки',
-                default='created_at'
-            ),
-            
+                       
         ]
     )
     def get(self, request,*args, **kwargs):

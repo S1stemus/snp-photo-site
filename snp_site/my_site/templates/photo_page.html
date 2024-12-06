@@ -28,9 +28,10 @@
         {% endif %}
 
         <h3>Комментарии:</h3>
-        {% for comment in photo.model_relation.all %}
-            {% include 'comment.html' with comment=comment %}
-        {% endfor %}
+        <div id="comments">
+            
+        </div>
+        
     </div>
 </div>
 {% endblock %}
@@ -66,7 +67,61 @@
         fetchphoto();
     });
     
-
+    
     
 </script>
+<script>
+    function getPhotoId(){
+        const url = new URL(window.location.href); // Создаем объект URL
+        const pathSegments = url.pathname.split('/'); // Разделяем путь по символу '/'
+        const photoId = pathSegments[pathSegments.length - 2]; // Извлекаем предпоследний элемент
+        return photoId;
+    }
+    async function fetchComments(photo_id) {
+        const response = await fetch('http://127.0.0.1:8000/api/comments/' + photo_id +'/?page=1&per_page=10', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        return data;
+    }
+    function addComment(comment) {
+            comments=document.getElementById('comments');
+            ulcomment = document.createElement('ul');
+            ulcomment.classList.add('list-unstyled');
+            newComment = document.createElement('li');
+            newComment.classList.add('mb-4');
+            newComment.id = `comment-${comment.id}`;
+            newComment.innerHTML = `
+                <div class="card p-3" id='comment-card'>
+                    <img id='avatar' style="width: 40px; height: 40px;" src="${comment.user.avatar}"  class="img-fluid  me-2 "></img>
+                    <p class="fw-bold" id='comment-user'>${comment.user.username}</p>
+                    <p id='comment-text'>${comment.comment}</p>
+                </div>
+                `;
+            ulcomment.appendChild(newComment);
+            if (comment.comments.lenght >0) {
+                comment.comments.forEach(comment => {
+                    addComment(comment);
+                });
+            }
+            comments.appendChild(ulcomment);
+
+    }
+    function renderComment() {
+        photo_id = getPhotoId();
+        data=fetchComments(photo_id);
+        data.then(comments => {
+            comments.results.forEach(comment => {
+                addComment(comment);
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderComment();
+    })
+</script> 
 {% endblock %}
