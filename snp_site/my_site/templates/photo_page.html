@@ -8,24 +8,22 @@
         <h2 class="mt-2 text-center" id="description"></h2>
     </div>
 
-    <div class="post card p-4 mb-4">
-        {% if user.is_authenticated %}
-            <form action="{% url 'comment' photo.pk %}" method="post" class="mb-3">
-                {% csrf_token %}
-                <input type="hidden" name="content_type" value="photo">
-                <div class="input-group">
-                    <input type="text" name="comment" class="form-control" placeholder="Ваш комментарий..." required>
-                    <button type="submit" class="btn btn-primary">Отправить</button>
-                </div>
-            </form>
-            <form id="like-form" class="mb-3">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-outline-danger">
-                    <img src="{% static 'images/heart.png' %}" class="like-comment-image" alt="Лайк"/> 
-                    <span class="like-count">{{ photo.likes.count }}</span>
-                </button>
-            </form>
-        {% endif %}
+    <div class="post card p-4 mb-4" id="post">
+       <div id ='post-form'>
+        <form id="comment-form" class="mb-3">
+            <input type="hidden" name="content_type" value="photo">
+            <div class="input-group">
+                <input type="text" name="comment" class="form-control" placeholder="Ваш комментарий..." required>
+                <button type="submit" class="btn btn-primary">Отправить</button>
+            </div>
+        </form>
+        <form id="like-form" class="mb-3">
+            <button type="submit" class="btn btn-outline-danger">
+                <img src="http://127.0.0.1:8000/static/images/heart.png" class="like-comment-image" alt="Лайк"/> 
+                <span class="like-count">10</span>
+            </button>
+        </form>
+       </div>
 
         <h3>Комментарии:</h3>
         <div id="comments">
@@ -111,6 +109,11 @@
 
     }
     function renderComment() {
+        post=document.getElementById('post-form');
+        token = localStorage.getItem('token');
+        if (!token) {
+            document.getElementById('post-form').remove();   
+        }
         photo_id = getPhotoId();
         data=fetchComments(photo_id);
         data.then(comments => {
@@ -122,6 +125,10 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         renderComment();
+        
     })
+    
+
+    
 </script> 
 {% endblock %}
