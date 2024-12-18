@@ -3,6 +3,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from ..comment import Comment
 from models_app.models.photo.fsm import State, Flow
 from django.core.validators import FileExtensionValidator
+from django.utils.safestring import mark_safe
 
 
 
@@ -26,3 +27,8 @@ class Photo(models.Model):
     @property
     def flow(self):
         return Flow(self)
+    
+    def admin_photo(self):
+        return mark_safe(f'<img src="{self.photo.url}" width="400" height=auto />')
+    admin_photo.short_description = 'Фото'
+    admin_photo.allow_tags = True
