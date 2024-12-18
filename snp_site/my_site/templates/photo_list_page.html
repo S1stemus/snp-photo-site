@@ -5,15 +5,13 @@
 <div class="container mt-5">
     <form   class="mb-4">
         <select name="filter" id="filter"  class="form-select">
-            <option disabled selected>Filter</option>
             <option value="comment_count">Comment Count</option>
             <option value="created_at">New</option>
             <option value="popularity">Popular</option>
         </select>
     </form>
     <form   class="mb-4">
-        <select name="filter" id="filter_direction"  class="form-select">
-            <option disabled selected>Filter</option>            
+        <select name="filter" id="filter_direction"  class="form-select">         
             <option value="asc">Ascending</option>
             <option value="desc">Descending</option>
         </select>
@@ -23,6 +21,13 @@
     <div class="row" id='row'>
        
     </div>
+    <form id="pagination-form" class="d-flex justify-content-center mt-4">
+        <input type="hidden" name="page" id="page" value="1">
+        <input type="hidden" name="per_page" id="per_page" value="10">
+        <input type="button" id="prev-button" class="btn btn-primary me-2" value="Previous">
+        <span id="current-page"></span> 
+        <input type="button" id="next-button" class="btn btn-primary ms-2" value="Next" >
+    </form>
 </div>
 {% endblock %}
 {% block js %}
@@ -56,6 +61,33 @@
         const row = document.getElementById('row');
         row.innerHTML = '';
 
+        next=data.pagination.next_page;
+        prev=data.pagination.prev_page;
+        if(next==null){
+            document.getElementById('next-button').style.visibility = 'hidden';
+            document.getElementById('next-button').disabled = true;
+        }
+        else{
+            console.log(next);
+            document.getElementById('next-button').style.visibility = 'visible';
+            document.getElementById('next-button').disabled = false;
+            document.getElementById('next-button').value=next;                        
+        }
+        if(prev==null){
+            document.getElementById('prev-button').style.visibility = 'hidden';
+            document.getElementById('prev-button').disabled = true;
+        }
+        else{
+           
+            console.log(prev);
+            document.getElementById('prev-button').style.visibility = 'visible';
+            document.getElementById('prev-button').disabled = false;
+            document.getElementById('prev-button').value=prev;
+            
+        }
+
+        document.getElementById('current-page').textContent = `Страница ${data.pagination.current_page} из ${data.pagination.total_pages}`;
+
         data.results.forEach(element => {
             const card = document.createElement('div');
             page_url='http://127.0.0.1:8000/photos/'+element.id
@@ -84,7 +116,10 @@
                 </div>
                 `
             ;
-            token = localStorage.getItem('token');           
+
+
+            token = localStorage.getItem('token');
+
             
             document.getElementById('row').appendChild(card);
                     
@@ -95,6 +130,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         fetchPhotos(); // Изначально загружаем фотографии
+
 
         // Обработчик изменения фильтра
         document.getElementById('filter').addEventListener('change', () => {
@@ -110,8 +146,26 @@
 
             fetchPhotos(1, 10, sort_field, sort_direction);
         });
+        document.getElementById('prev-button').addEventListener('click', () => {
+            page=document.getElementById('prev-button').value;
+            sort_field = document.getElementById('filter').value;
+            sort_direction = document.getElementById('filter_direction').value;
+            fetchPhotos(page, 10, sort_field, sort_direction);
+        });
+        document.getElementById('next-button').addEventListener('click', () => {
+            page=document.getElementById('next-button').value;
+            sort_field = document.getElementById('filter').value;
+            sort_direction = document.getElementById('filter_direction').value;
+            fetchPhotos(page, 10, sort_field, sort_direction);
+        });
     });
 </script>
+
+
+
+
+
+
 
 
 
