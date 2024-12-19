@@ -10,7 +10,7 @@ class DeleteCommentService(ServiceWithResult):
     id = forms.IntegerField(min_value=1)
     current_user = ModelField(User)
     custom_validations = [
-        '_validate_comment_id',
+        '_validate_comment_exist',
         '_validated_user',
         '_validate_comments_exist'
     ]
