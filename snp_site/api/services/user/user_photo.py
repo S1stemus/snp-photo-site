@@ -3,12 +3,14 @@ from django import forms
 from models_app.models import User
 from service_objects.fields import ModelField
 from models_app.models.photo.models import Photo
+from models_app.models.photo.fsm import State
+
 
 
 
 class UserPhotoService(ServiceWithResult):
     user_id = forms.IntegerField(min_value=1)
-    current_user = ModelField(User, required=False)
+    current_user = ModelField(User,required=False)
 
     custom_validations = [
         '_validate_user'
@@ -25,8 +27,8 @@ class UserPhotoService(ServiceWithResult):
         return self
     @property
     def _user_photo(self):
-        if User.objects.get(id=self.cleaned_data['user_id']) == self.cleaned_data['current_user'] or self.cleaned_data['current_user'] is None:
+        if User.objects.get(id=self.cleaned_data['user_id']) == self.cleaned_data['current_user']:           
             return Photo.objects.filter(user=self.cleaned_data['user_id'])
         else:
             photos = Photo.objects.filter(user=self.cleaned_data['user_id'])
-            return photos.filter(state=photos.State.APPROVED)
+            return photos.filter(state=State.APPROVED)

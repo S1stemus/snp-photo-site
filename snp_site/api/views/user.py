@@ -41,8 +41,14 @@ class ListUserPhotoView(APIView):
         responses={200: PhotoSerializer}
     )
     def get(self, request, *args, **kwargs):
-        outcome=ServiceOutcome(UserPhotoService,{'user_id':kwargs['id'],'current_user':request.user},request.FILES)
-        return Response(PhotoSerializer(outcome.result,many=True).data)
+        print(request.user.is_anonymous)
+
+        if(request.user.is_anonymous): 
+            outcome=ServiceOutcome(UserPhotoService,{'user_id':kwargs['id']},request.FILES)
+            return Response(PhotoSerializer(outcome.result,many=True).data)
+        else:          
+            outcome=ServiceOutcome(UserPhotoService,{'user_id':kwargs['id'],'current_user':request.user},request.FILES)
+            return Response(PhotoSerializer(outcome.result,many=True).data)
     
 
 class RegisterUserView(APIView):
