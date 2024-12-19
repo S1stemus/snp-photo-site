@@ -25,4 +25,13 @@ class Flow():
     @state.transition(source=(State.WAITING,), target=State.APPROVED)
     def approve(self):
         pass
+
+    @state.transition(source=(State.WAITING,), target=State.REJECTED)
+    def reject(self):
+        pass
+
+    @state.transition(source=(State.APPROVED,), target=State.WAITING)
+    def update_waiting(self):
+        pass
+
     
