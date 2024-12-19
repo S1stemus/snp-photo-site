@@ -6,6 +6,8 @@ from service_objects.errors import NotFound
 from django.core.paginator import Paginator, EmptyPage
 from django.conf import settings
 
+from models_app.models.photo.models import Photo
+
 class RetrieveCommentsByIdService(ServiceWithResult):
     id = forms.IntegerField(required=True, min_value=1)
 
@@ -38,8 +40,8 @@ class RetrieveCommentsByIdService(ServiceWithResult):
 
     @property
     def _filtered_comments(self):
-            return Comment.objects.filter(object_id=self.cleaned_data['id'])          
+            return Comment.objects.filter(object_id=self.cleaned_data['id']).order_by('created_at')        
 
     def _validate_comment_id(self):
-        if not Comment.objects.filter(object_id=self.cleaned_data['id']).exists():
+        if (not Comment.objects.filter(object_id=self.cleaned_data['id']).exists()) and (not Photo.objects.filter(id=self.cleaned_data['id']).exists()):
             self.add_error('id',NotFound(message = f'Объект {self.cleaned_data["id"]} не найден '))
