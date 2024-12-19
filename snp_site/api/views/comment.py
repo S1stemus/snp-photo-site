@@ -65,7 +65,7 @@ class RetreiveCommentView(APIView):
         ]
     )
     def get(self, request,*args, **kwargs):
-        outcome=ServiceOutcome(RetrieveCommentsByIdService,{'id':kwargs['id']} )        
+        outcome=ServiceOutcome(RetrieveCommentsByIdService,{'id':kwargs['id']}|request.query_params.dict())        
         return Response(
         {
             "pagination": CustomPagination(
@@ -89,7 +89,7 @@ class RetreiveCommentView(APIView):
         }
     )
     def delete(self, request, *args, **kwargs):
-        outcome=ServiceOutcome(DeleteCommentService,{'id':kwargs['id']} )
+        outcome=ServiceOutcome(DeleteCommentService,{'id':kwargs['id'],'current_user':request.user} )
         return Response(None, status=status.HTTP_200_OK)
     
     @extend_schema(
