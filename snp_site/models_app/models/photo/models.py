@@ -10,10 +10,12 @@ from django.utils.safestring import mark_safe
 
 class Photo(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE,null=False,blank=False,verbose_name='Пользователь',related_name='photos',related_query_name='photo')
+    name = models.CharField(max_length=127, verbose_name="Название" ,null=False,blank=False,default='Фотография')
+    prev_name=models.CharField(max_length=127, verbose_name="Предыдущее название" ,null=True,blank=False)
     photo = models.ImageField(upload_to='images/', verbose_name="Фото", null=False,blank=False,validators=[FileExtensionValidator(['png', 'jpg', 'jpeg'])])
-    # prev_photo = models.ImageField(upload_to='images/', verbose_name="Предыдущее фото", null=True,blank=False,validators=[FileExtensionValidator(['png', 'jpg', 'jpeg'])])
+    prev_photo = models.ImageField(upload_to='images/', verbose_name="Предыдущее фото", null=True,blank=False,validators=[FileExtensionValidator(['png', 'jpg', 'jpeg'])])
     description = models.CharField(max_length=127, verbose_name="Описание" ,null=False,blank=False) 
-    # prev_description = models.CharField(max_length=127, verbose_name="Предыдущее описание" ,null=True,blank=False) 
+    prev_description = models.CharField(max_length=127, verbose_name="Предыдущее описание" ,null=True,blank=False) 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     model_relation=GenericRelation(Comment)
@@ -32,3 +34,6 @@ class Photo(models.Model):
         return mark_safe(f'<img src="{self.photo.url}" width="400" height=auto />')
     admin_photo.short_description = 'Фото'
     admin_photo.allow_tags = True
+
+    def change_photo(sejf,name,photo,description,id):
+        pass
