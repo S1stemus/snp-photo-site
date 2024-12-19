@@ -43,7 +43,7 @@
     $(document).ready(function() {
         const token = localStorage.getItem('token');
         const navItems = $('#nav-items');
-        const user_url = 'http://127.0.0.1:8000/user/'+localStorage.getItem('user_id')+'/';
+        const user_url = 'http://127.0.0.1:8000/users/page/'+localStorage.getItem('user_id')+'/';
 
         if (token) {
             // Если токен существует, добавляем элементы для авторизованного пользователя
