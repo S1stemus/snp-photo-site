@@ -14,20 +14,29 @@
             <input type="hidden" name="content_type" value="photo">
             <div class="input-group">
                 <input type="text" name="comment" class="form-control" placeholder="Ваш комментарий..." required>
-                <button type="submit" class="btn btn-primary">Отправить</button>
+                <button id="comment-photo-button" type="submit" class="btn btn-primary">Отправить</button>
             </div>
         </form>
         <form id="like-form" class="mb-3">
-            <button type="submit" class="btn btn-outline-danger">
+            <button type="submit" class="btn btn-outline-danger" id="like-button">
                 <img src="http://127.0.0.1:8000/static/images/heart.png" class="like-comment-image" alt="Лайк"/> 
-                <span class="like-count">10</span>
+                <span class="like-count" id="like-count"></span>
             </button>
         </form>
        </div>
 
         <h3>Комментарии:</h3>
-        <div id="comments">
-            
+        <div id="comment-container">
+            <div id="comments">
+                
+            </div>
+            <form id="pagination-form" class="d-flex justify-content-center mt-4">
+                <input type="hidden" name="page" id="page" value="1">
+                <input type="hidden" name="per_page" id="per_page" value="10">
+                <input type="button" id="prev-button" class="btn btn-primary me-2" value="Previous">
+                <span id="current-page"></span> 
+                <input type="button" id="next-button" class="btn btn-primary ms-2" value="Next" >
+            </form>
         </div>
         
     </div>
@@ -50,15 +59,17 @@
         const response = await fetch(url, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json'               
             }
         });
         const data = await response.json();
         console.log(data);
-
+        checkToken(data.like_count,data.comment_count);
         document.getElementById('photo').src = data.photo;
         document.getElementById('user').textContent = data.user.username;
         document.getElementById('description').textContent = data.description;
+        document.getElementById('like-count').textContent = data.like_count;
+        localStorage.setItem('count', data.like_count); // Сохраняем значение в Local Storage Item
 
         }
     document.addEventListener('DOMContentLoaded', () => {
@@ -68,65 +79,367 @@
     
     
 </script>
-<script>
-    function getPhotoId(){
-        const url = new URL(window.location.href); // Создаем объект URL
-        const pathSegments = url.pathname.split('/'); // Разделяем путь по символу '/'
-        const photoId = pathSegments[pathSegments.length - 2]; // Извлекаем предпоследний элемент
-        return photoId;
-    }
-    async function fetchComments(photo_id) {
-        const response = await fetch('http://127.0.0.1:8000/api/comments/' + photo_id +'/?page=1&per_page=10', {
+<script>    
+    async function fetchComments(photo_id, page) {
+        const response = await fetch('http://127.0.0.1:8000/api/comments/' + photo_id +'/?page=' + page + '&per_page=4', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
         });
         const data = await response.json();
+
+        next=data.pagination.next_page;
+        prev=data.pagination.prev_page;
+        console.log("page="+page);
+        console.log("next="+next);
+        console.log(data.pagination);
+        if(next==null){
+            document.getElementById('next-button').style.visibility = 'hidden';
+            document.getElementById('next-button').disabled = true;
+        }
+        else{
+            console.log(next);
+            document.getElementById('next-button').style.visibility = 'visible';
+            document.getElementById('next-button').disabled = false;
+            document.getElementById('next-button').value=next;                        
+        }
+        if(prev==null){
+            document.getElementById('prev-button').style.visibility = 'hidden';
+            document.getElementById('prev-button').disabled = true;
+        }
+        else{
+           
+            console.log(prev);
+            document.getElementById('prev-button').style.visibility = 'visible';
+            document.getElementById('prev-button').disabled = false;
+            document.getElementById('prev-button').value=prev;
+            
+        }
+        document.getElementById('current-page').textContent = `Страница ${data.pagination.current_page} из ${data.pagination.total_pages}`;
         return data;
     }
-    function addComment(comment) {
-            comments=document.getElementById('comments');
-            ulcomment = document.createElement('ul');
-            ulcomment.classList.add('list-unstyled');
-            newComment = document.createElement('li');
-            newComment.classList.add('mb-4');
-            newComment.id = `comment-${comment.id}`;
-            newComment.innerHTML = `
-                <div class="card p-3" id='comment-card'>
-                    <img id='avatar' style="width: 40px; height: 40px;" src="${comment.user.avatar}"  class="img-fluid  me-2 "></img>
-                    <p class="fw-bold" id='comment-user'>${comment.user.username}</p>
-                    <p id='comment-text'>${comment.comment}</p>
-                </div>
-                `;
-            ulcomment.appendChild(newComment);
-            if (comment.comments.lenght >0) {
-                comment.comments.forEach(comment => {
-                    addComment(comment);
-                });
-            }
-            comments.appendChild(ulcomment);
+    async function CreateComments(object_id,comment,content_type,li,level) {
+        const response = await fetch('http://127.0.0.1:8000/api/comments/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+            body: JSON.stringify({
+                comment: comment,
+                content_type: content_type,
+                object_id: object_id
+            })
+        });
+        checkResponse(response);
+        const data = await response.json();
+        del_button=document.getElementById(`delete-button-${object_id}`);
+        if(del_button){
+            del_button.remove();
+        }
+        addComment(data, li, level+1);
 
+        
     }
-    function renderComment() {
-        post=document.getElementById('post-form');
+    function checkResponse(response) {
+        if (response.status === 401) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            localStorage.removeItem('user_id');
+            localStorage.removeItem('refresh');
+            alert('Время сессии истекло. Пожалуйста, введите данные заново.');
+            window.location.href = 'http://127.0.0.1:8000/jwt/';
+            return;
+        }
+    }
+    function addComment(comment, element,level) {
+
+        // Создаем ul для комментариев
+        const ulcomment = document.createElement('ul');
+        ulcomment.classList.add('list-unstyled');
+    
+        // Создаем li для нового комментария
+        const newComment = document.createElement('li');        
+        newComment.classList.add('mb-4');
+        newComment.id = `comment-${comment.id}`; // Исправлено: добавлены обратные кавычки для шаблонной строки
+        commentCard= document.createElement('div');
+
+        token = localStorage.getItem('token');
+        lenght=0;
+        if(comment.comments){
+            lenght=comment.comments.length;
+        }
+        
+        if(token){        
+            if(localStorage.getItem('username') == comment.user.username){
+                console.log(comment.comments)
+                if(lenght>0){     
+                    console.log('u1')                         
+                        newComment.innerHTML = `
+                        <div class="card p-3"  style="margin-left: ${level * 20}px; margin-top:10px"  id='comment-card-${comment.id}'>
+                        <img id='avatar' style="width: 40px; height: 40px;" src="${comment.user.avatar}" class="img-fluid me-2" />
+                        <p class="fw-bold" id='comment-user'>${comment.user.username}</p>
+                        <p id='comment-text-${comment.id}'>${comment.comment}</p>
+                        <form id="comment-form-${comment.id}" class="mb-3">
+                                    <input type="hidden" name="content_type" value="comment">
+                                    <div class="input-group">
+                                        <input type="text" name="comment" class="form-control" placeholder="Ваш комментарий..." required>
+                                        <button id="update-button-${comment.id}" type="submit" class="btn btn-primary">Редактировать</button>
+                                        <button id="button-${comment.id}" type="submit" class="btn btn-primary">Отправить</button>
+                                    </div>  
+                        </form>
+                    </div
+                    `  ;              
+                }
+                else{
+                    console.log('u2') 
+                    newComment.innerHTML = `
+                        <div class="card p-3"  style="margin-left: ${level * 20}px; margin-top:10px"  id='comment-card-${comment.id}'>
+                    <img id='avatar' style="width: 40px; height: 40px;" src="${comment.user.avatar}" class="img-fluid me-2" />
+                    <p class="fw-bold" id='comment-user'>${comment.user.username}</p>
+                    <p id='comment-text-${comment.id}'>${comment.comment}</p>
+                    <form id="comment-form-${comment.id}" class="mb-3">
+                                <input type="hidden" name="content_type" value="comment">
+                                <div class="input-group">
+                                    <input type="text" name="comment" class="form-control" placeholder="Ваш комментарий..." required>
+                                    <button id="update-button-${comment.id}" type="submit" class="btn btn-primary">Редактировать</button>
+                                    <button id="delete-button-${comment.id}" type="submit" class="btn btn-danger">Удалить</button>
+                                    <button id="button-${comment.id}" type="submit" class="btn btn-primary">Отправить</button>
+                                </div>  
+                    </form>
+                </div>
+                    `;
+                }
+            }
+            else{
+                console.log('u3') 
+                newComment.innerHTML = `
+                <div class="card p-3"  style="margin-left: ${level * 20}px; margin-top:10px"  id='comment-card-${comment.id}'>
+            <img id='avatar' style="width: 40px; height: 40px;" src="${comment.user.avatar}" class="img-fluid me-2" />
+            <p class="fw-bold" id='comment-user'>${comment.user.username}</p>
+            <p id='comment-text-${comment.id}'>${comment.comment}</p>
+            <form id="comment-form-${comment.id}" class="mb-3">
+                        <input type="hidden" name="content_type" value="comment">
+                        <div class="input-group">
+                            <input type="text" name="comment" class="form-control" placeholder="Ваш комментарий..." required>
+                            <button id="button-${comment.id}" type="submit" class="btn btn-primary">Отправить</button>
+                        </div>  
+            </form>
+        </div>
+            `;
+
+            }
+        }
+        else{
+            console.log('u4') 
+            newComment.innerHTML =
+        `
+            <div class="card p-3"  style="margin-left: ${level * 20}px; margin-top:10px"  id='comment-card'>
+                <img id='avatar' style="width: 40px; height: 40px;" src="${comment.user.avatar}" class="img-fluid me-2" />
+                <p class="fw-bold" id='comment-user'>${comment.user.username}</p>
+                <p id='comment-text-${comment.id}'>${comment.comment}</p>                
+            </div>
+                    `
+        ;
+        }
+
+        
+        
+        // Добавляем новый комментарий в ul
+        ulcomment.appendChild(newComment);
+        
+        element.appendChild(ulcomment);
+        button = document.getElementById(`button-${comment.id}`);
+        if(button) {
+            button.addEventListener('click', async function(event) {
+            event.preventDefault();
+            text = document.getElementById(`comment-form-${comment.id}`).querySelector('input[name="comment"]').value;
+            li=document.getElementById(`comment-${comment.id}`);
+            CreateComments(comment.id,text,'comment',li,level);          
+        });
+        DeleteButtonAction(comment.id);
+        UpdateButtonAction(comment.id);
+        
+        // Проверяем, есть ли вложенные комментарии
+        if (comment.comments && comment.comments.length > 0) {
+            comment.comments.forEach(childComment => {               
+                addComment(childComment, newComment, level + 1); // Передаем новый комментарий как элемент
+            });
+        }
+        
+        // Добавляем ul с комментариями к родительскому элементу
+        
+        
+        
+
+        }
+        
+    }
+    async function fetchLikes(photo_id) {
+        const response =await fetch('http://127.0.0.1:8000/api/like/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+            body: JSON.stringify({
+                photo_id: photo_id
+            })
+        });
+        checkResponse(response);
+    
+    
+        const data = await response.json();
+        if(data.like_count){
+            renderLikes(data.like_count);
+        }
+        else{
+            renderLikes(Number(document.getElementById('like-count').textContent)-1);
+        }
+       
+    }
+
+    function renderLikes(count) {
+        like_count=document.getElementById('like-count');
+        if(like_count){           
+            like_count.textContent=count;
+        }
+    }
+    function checkToken(like,comment) {
+
         token = localStorage.getItem('token');
         if (!token) {
-            document.getElementById('post-form').remove();   
+            document.getElementById('post-form').innerHTML = `
+            <img src="http://127.0.0.1:8000/static/images/heart.png" class="like-comment-image" alt="Лайк"/> 
+            <span class="like-count" id="like-count">${like}</span>
+            <img src="http://127.0.0.1:8000/static/images/chat.png" class="like-comment-image" alt="Комментарий"/>
+            <span class="comment-count" id="comment-count">${comment}</span>
+            `;  
         }
+        else{
+            renderLikes(like);
+        }
+    }
+
+
+      
+    
+    function renderComment(page=1) {
+        comments_box=document.getElementById('comments');
+        comments_box.innerHTML='';
+        post=document.getElementById('post-form');
+        
         photo_id = getPhotoId();
-        data=fetchComments(photo_id);
+        data=fetchComments(photo_id,page);
+        
         data.then(comments => {
             comments.results.forEach(comment => {
-                addComment(comment);
+                addComment(comment,comments_box,0);
+                 
             });
         });
     }
 
+    async function DeleteComment(comment_id) {
+        console.log(comment_id);
+        const response =await fetch(`http://127.0.0.1:8000/api/comments/${comment_id}/`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        });
+        checkResponse(response);
+    }
+
+    function DeleteButtonAction(comment_id) {
+        button=document.getElementById(`delete-button-${comment_id}`)
+        if(button){
+            console.log(`delete-${comment_id}`);
+            button.addEventListener('click', async function(event) {
+                event.preventDefault();
+                DeleteComment(comment_id);
+                card=document.getElementById(`comment-card-${comment_id}`);
+                if(card) {
+                    card.remove();
+                }   
+            });
+        }
+    }
+
+    
     document.addEventListener('DOMContentLoaded', () => {
+
         renderComment();
-        
+        photobutton=document.getElementById('comment-photo-button');
+        if(photobutton){
+            photobutton.addEventListener('click', async function(event) {
+                event.preventDefault();
+                text = document.getElementById('comment-form').querySelector('input[name="comment"]').value;
+                photo_id = getPhotoId();
+                div=document.getElementById('comments');
+                CreateComments(photo_id,text,'photo',div,-1);
+            });       
+        }
+        likebutton=document.getElementById('like-button');
+        if(likebutton){
+            likebutton.addEventListener('click', async function(event) {
+                event.preventDefault();
+                photo_id = getPhotoId();
+                fetchLikes(photo_id);
+            });       
+        }
+        document.getElementById('prev-button').addEventListener('click', async function(event) {
+            event.preventDefault();
+            page=document.getElementById('prev-button').value;          
+            renderComment(page);
+        });
+        document.getElementById('next-button').addEventListener('click', async function(event)  {
+            event.preventDefault();
+            page=document.getElementById('next-button').value;       
+            renderComment(page);
+        });
+
     })
+
+    async function UpdateComment(comment_id,comment_text) {
+        const response =await fetch(`http://127.0.0.1:8000/api/comments/${comment_id}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+            body: JSON.stringify({
+                comment:comment_text
+            })
+        });
+        checkResponse(response);
+        text=document.getElementById(`comment-text-${comment_id}`);  
+        if(text){
+            text.textContent=comment_text;
+        }
+    }
+
+    function UpdateButtonAction(comment_id) {
+        button=document.getElementById(`update-button-${comment_id}`)
+        if(button){
+            console.log(`update-${comment_id}`);
+            button.addEventListener('click', async function(event) {
+                event.preventDefault();
+                text=document.getElementById(`comment-form-${comment_id}`).querySelector('input[name="comment"]').value;
+                console.log(text.value);
+                if(text){                   
+                    UpdateComment(comment_id,text);               
+                }
+            });
+        }
+    }
+
+    
+
+   
+
     
 
     
