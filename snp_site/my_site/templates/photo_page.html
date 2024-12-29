@@ -5,7 +5,8 @@
     <div class="card">
         <img  alt="нет фото" id="photo" class="card-img-top mx-auto" style="max-width: 80%; height: auto;">
         <h1 class="fw-bold mt-2 text-center" id="user"></h1>
-        <h2 class="mt-2 text-center" id="description"></h2>
+        <h2 class="mt-2 text-center" id="name"></h2>
+        <h3 class="mt-2 text-center" id="description"></h3>
     </div>
 
     <div class="post card p-4 mb-4" id="post">
@@ -67,6 +68,7 @@
         checkToken(data.like_count,data.comment_count);
         document.getElementById('photo').src = data.photo;
         document.getElementById('user').textContent = data.user.username;
+        document.getElementById('name').textContent = data.name;
         document.getElementById('description').textContent = data.description;
         document.getElementById('like-count').textContent = data.like_count;
         localStorage.setItem('count', data.like_count); // Сохраняем значение в Local Storage Item
@@ -178,7 +180,9 @@
                     console.log('u1')                         
                         newComment.innerHTML = `
                         <div class="card p-3"  style="margin-left: ${level * 20}px; margin-top:10px"  id='comment-card-${comment.id}'>
+                        <a href=http://127.0.0.1:8000/users/page/${comment.user.id}/>
                         <img id='avatar' style="width: 40px; height: 40px;" src="${comment.user.avatar}" class="img-fluid me-2" />
+                        </a>
                         <p class="fw-bold" id='comment-user'>${comment.user.username}</p>
                         <p id='comment-text-${comment.id}'>${comment.comment}</p>
                         <form id="comment-form-${comment.id}" class="mb-3">
@@ -196,7 +200,9 @@
                     console.log('u2') 
                     newComment.innerHTML = `
                         <div class="card p-3"  style="margin-left: ${level * 20}px; margin-top:10px"  id='comment-card-${comment.id}'>
-                    <img id='avatar' style="width: 40px; height: 40px;" src="${comment.user.avatar}" class="img-fluid me-2" />
+                    <a href=http://127.0.0.1:8000/users/page/${comment.user.id}/>
+                        <img id='avatar' style="width: 40px; height: 40px;" src="${comment.user.avatar}" class="img-fluid me-2" />
+                    </a>
                     <p class="fw-bold" id='comment-user'>${comment.user.username}</p>
                     <p id='comment-text-${comment.id}'>${comment.comment}</p>
                     <form id="comment-form-${comment.id}" class="mb-3">
@@ -216,7 +222,9 @@
                 console.log('u3') 
                 newComment.innerHTML = `
                 <div class="card p-3"  style="margin-left: ${level * 20}px; margin-top:10px"  id='comment-card-${comment.id}'>
-            <img id='avatar' style="width: 40px; height: 40px;" src="${comment.user.avatar}" class="img-fluid me-2" />
+            <a href=http://127.0.0.1:8000/users/page/${comment.user.id}/>
+                        <img id='avatar' style="width: 40px; height: 40px;" src="${comment.user.avatar}" class="img-fluid me-2" />
+                        </a>
             <p class="fw-bold" id='comment-user'>${comment.user.username}</p>
             <p id='comment-text-${comment.id}'>${comment.comment}</p>
             <form id="comment-form-${comment.id}" class="mb-3">
@@ -233,15 +241,22 @@
         }
         else{
             console.log('u4') 
-            newComment.innerHTML =
-        `
-            <div class="card p-3"  style="margin-left: ${level * 20}px; margin-top:10px"  id='comment-card'>
-                <img id='avatar' style="width: 40px; height: 40px;" src="${comment.user.avatar}" class="img-fluid me-2" />
-                <p class="fw-bold" id='comment-user'>${comment.user.username}</p>
-                <p id='comment-text-${comment.id}'>${comment.comment}</p>                
-            </div>
-                    `
-        ;
+            newComment.innerHTML = `
+                <div class="card p-3"  style="margin-left: ${level * 20}px; margin-top:10px"  id='comment-card-${comment.id}'>
+            <a href=http://127.0.0.1:8000/users/page/${comment.user.id}/>
+                        <img id='avatar' style="width: 40px; height: 40px;" src="${comment.user.avatar}" class="img-fluid me-2" />
+                        </a>
+            <p class="fw-bold" id='comment-user'>${comment.user.username}</p>
+            <p id='comment-text-${comment.id}'>${comment.comment}</p>
+            <form id="comment-form-${comment.id}" class="mb-3">
+                        <input type="hidden" name="content_type" value="comment">
+                        <div class="input-group">
+                            <button id="button-${comment.id}" type="submit" class="btn btn-primary" hidden>Отправить</button>
+                        </div>  
+            </form>
+        </div>
+            `;
+            
         }
 
         

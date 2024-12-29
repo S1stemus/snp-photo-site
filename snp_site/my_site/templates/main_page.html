@@ -6,6 +6,7 @@
     <h1>Create a New Photo</h1>
     <form id="create-form" class="w-50 mb-3" enctype="multipart/form-data">
         <input id="description" class="form-control" type='text' name="description" placeholder="Description" required>
+        <input id="name" class="form-control" type='text' name="name" placeholder="Name" required>
         <input id="photo" class="form-control" type="file" name="photo" required>
         <button id="create-button" class="btn btn-primary mt-3 align-self-center" type="button">Create</button>
     </form>
@@ -19,8 +20,9 @@
             document.getElementById('create-button').addEventListener('click', async function() {
                 const description = document.getElementById('description').value;
                 const photo = document.getElementById('photo').files[0];
+                const name =document.getElementById('name').value;
 
-                if (!description || !photo) {
+                if (!description || !photo || !name) {
                     alert('Пожалуйста, заполните все поля.');
                     return;
                 }
@@ -28,6 +30,8 @@
                 const formData = new FormData();
                 formData.append('description', description);
                 formData.append('photo', photo);
+                formData.append('name',name);
+                url=
 
                 try {
                     const response = await fetch('http://127.0.0.1:8000/api/photos/', {
@@ -55,6 +59,7 @@
                     const data = await response.json();
                     console.log(data);
                     alert('Вы успешно создали фото');
+                    window.location.href='http://127.0.0.1:8000/photos/';
                 } catch (error) {
                     console.error('Error:', error);
                     alert('Произошла ошибка при создании фото: ' + error.message);

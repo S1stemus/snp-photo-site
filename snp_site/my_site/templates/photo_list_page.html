@@ -94,13 +94,13 @@
             card.classList.add('col-md-4', 'mb-4', 'text-center');
             card.innerHTML = 
                 `
-                <div class="card">
+                <div class="card" title>
                     <a id="photo-link${element.id}"  href='${page_url}'>
-                        <img src="${element.photo}" alt="нет фото" class="card-img-top mx-auto" style="max-width: 100%; height: auto;">
+                        <img title='${element.description}' src="${element.photo}" alt="нет фото" class="card-img-top mx-auto" style="max-width: 100%; height: auto;">
                     </a>
                     <div class="card-body">
                         <h5 class="card-title">${element.user.username}</h5>
-                        <p class="card-text">${element.description}</p>
+                        <p class="card-text" >${element.name}</p>
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="d-flex align-items-center">
                                 <img src="http://127.0.0.1:8000/static/images/chat.png" class="like-comment-image me-2" alt="comments" />

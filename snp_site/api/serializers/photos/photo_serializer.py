@@ -7,7 +7,7 @@ class PhotoSerializer(serializers.ModelSerializer):
     user=UserSerializer()
     class Meta:
         model = Photo
-        fields = ['id','photo', 'description', 'user', 'created_at', 'updated_at','state','like_count','comment_count']
+        fields = ['id','photo','name', 'description', 'user', 'created_at', 'updated_at','state','like_count','comment_count']
     def get_like_count(self, obj)->int:
         return obj.likes.count()
     def get_comment_count(self, obj)->int:
