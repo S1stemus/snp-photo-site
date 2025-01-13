@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from service_objects.services import ServiceOutcome
-from api.serializers.likes.like_serializer import LikeSerializer
+from api.serializers.likes.show import LikeShowSerializer
 from drf_spectacular.utils import extend_schema
 from api.services.like.create import CreateLikeService
 from rest_framework.permissions import IsAuthenticated
@@ -20,10 +20,10 @@ class LikePostView(APIView):
         description='создает лайк',
         request=LikePostSerializer,
         responses={
-            200: LikeSerializer
+            200: LikeShowSerializer
         },
     )
     def post(self, request, *args, **kwargs):
         outcome=ServiceOutcome(CreateLikeService,{'current_user':request.user}|request.data )
-        return Response(LikeSerializer(outcome.result).data, status=status.HTTP_200_OK)
+        return Response(LikeShowSerializer(outcome.result).data, status=status.HTTP_200_OK)
 
