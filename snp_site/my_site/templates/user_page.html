@@ -3,50 +3,293 @@
 
 {% block content %}
     
-    <div class ="post-container">
+
+    <div id="container" class ="post-container">
         <div class="post">
-            <h1>{{ user.username }}</h1>
-            <img src={{user.avatar.url}} alt="нет фото"/>
+            <h1 id='username' class="fw-bold mt-2 text-center"></h1>
+            <img id='photo' alt="нет фото"/>
         </div>
-        <h1>Photos</h1>
-        <form action="{% url 'user_page' user.id %}" method="get">
-            {% csrf_token %}
-            <select name="filter", onchange="this.form.submit()">
-                <option disabled selected>Filter</option>
-                <option value="old">Old</option>
-                <option value="new">New</option>
-                <option value="popular">Popular</option>
-            </select>       
+        <div class="post">
+            <h1>Photos</h1>
+            <form   class="mb-4">
+                <select name="filter" id="filter"  class="form-select">
+                    <option value="comment_count">По количеству комментариев</option>
+                    <option value="created_at">По дате</option>
+                    <option value="popularity">По популярности</option>
+                </select>
+            </form>
+            <form   class="mb-4">
+                <select name="filter" id="filter_direction"  class="form-select">         
+                    <option value="asc">По возрастанию</option>
+                    <option value="desc">По убыванию</option>
+                </select>
+            </form>
+            <form   class="mb-4">
+                <select name="filter" id="status_bar"  class="form-select">
+                    <option value="approved">Разрешенные</option>
+                    <option value="rejected">Отклоненные</option>
+                    <option value="waiting">В ожидании</option>
+                    <option value="on_delete">На удалении</option>
+                    <option value="all">Все</option>
+                </select>
+            </form>
+        </div>
+        <div id="photos">
+                        
+        </div>
+        <form id="pagination-form" class="d-flex justify-content-center mt-4">
+            <input type="hidden" name="page" id="page" value="1">
+            <input type="hidden" name="per_page" id="per_page" value="10">
+            <input type="button" id="prev-button" class="btn btn-primary me-2" value="Previous">
+            <span id="current-page"></span> 
+            <input type="button" id="next-button" class="btn btn-primary ms-2" value="Next" >
         </form>
-            {% for photo in photos %}
-                    <div class="post">
+
+    </div>
+
     
-                        <h1>{{ photo.user}}<h1> 
-                        <h1>{{photo.caption}}</h1>
-                        <a href='{% url 'photo_page' photo.id %}'>
-                            <img src={{photo.photo.url}} alt="нет фото"/>
-                        </a>
-                        <div class="coment-and-like-container">
+{% endblock %}
+
+
+
+{%block js%}
+    <script>
+        function getUserId() {
+            const url = new URL(window.location.href); // Создаем объект URL
+            const pathSegments = url.pathname.split('/'); // Разделяем путь по символу '/'
+            const UserId = pathSegments[pathSegments.length - 2]; // Извлекаем предпоследний элемент
+            console.log(url);
+            
+            return UserId;
+            
+        }
+        async function FetchUser(){
+            const url=`http://127.0.0.1:8000/api/users/`+getUserId();
+                        
+            const response= await fetch(url,{
+                method:"GET",
+                headers: {
+                    'Content-Type': 'application/json'               
+                }
+            });  
+            const data=await response.json();
+            document.getElementById('username').textContent=data.username;
+            document.getElementById('photo').src=data.avatar;
+            localStorage.setItem('current_username', data.username); // Сохраняем значение в Local Storage Item
+
+        }
+        async function FetchUserPhoto(page=1,per_page=10,sort_direction='asc',sort_field='created_at',state='approved'){
+            
+            const url='http://127.0.0.1:8000/api/users/photos/'+getUserId()+'/?page='+page+'&per_page='+per_page+'&sort_direction='+sort_direction+'&sort_field='+sort_field+'&state='+state;
+            
+        
+            const response = await fetch(url,{
+            method:"GET",
+            headers: localStorage.getItem('token') ? {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            } : {
+                'Content-Type': 'application/json'
+            },                                  
+            });
+                             
+            const data = await response.json();
+            console.log(data);
+
+            next=data.pagination.next_page;
+            prev=data.pagination.prev_page;
+            if(next==null){
+                document.getElementById('next-button').style.visibility = 'hidden';
+                document.getElementById('next-button').disabled = true;
+            }
+            else{
+                console.log(next);
+                document.getElementById('next-button').style.visibility = 'visible';
+                document.getElementById('next-button').disabled = false;
+                document.getElementById('next-button').value=next;                        
+            }
+            if(prev==null){
+                document.getElementById('prev-button').style.visibility = 'hidden';
+                document.getElementById('prev-button').disabled = true;
+            }
+            else{
+               
+                console.log(prev);
+                document.getElementById('prev-button').style.visibility = 'visible';
+                document.getElementById('prev-button').disabled = false;
+                document.getElementById('prev-button').value=prev;
+                
+            }
+    
+            document.getElementById('current-page').textContent = `Страница ${data.pagination.current_page} из ${data.pagination.total_pages}`;
+    
+            photos=document.getElementById('photos');
+            photos.innerHTML='';
+            console.log(data);
+            
+            RenderPhoto(data.results);
+
+
+        }
+        function RenderPhoto(photo){
+            photos=document.getElementById('photos');
+            photo.forEach(element => {
+                
+          
+                const state_colors = {
+                    'approved': ['green', 'Одобрено'],
+                    'rejected': ['red', 'Отклонено'],
+                    'waiting': ['yellow', 'В ожидании'],
+                    'on_delete': ['blue', 'На удалении']
+                }
+                photos.innerHTML+=`
+                <div class="post card p-4 mb-4" style="width:600px;">
+                    <div id='state' class="fw-bold mt-2 text-center p-2  rounded" style="background-color:${state_colors[element.state][0]} ;">${state_colors[element.state][1]}</div>
+                    <h1 class="fw-bold mt-2 text-center">${element.user.username}</h1>
+                    <h1 class="fw-bold mt-2 text-center">${element.name}</h1>
+                    <img src=${element.photo} alt="нет фото"/>
+                    <div class="coment-and-like-container">
                             <div class="left-element">
-                                <img src="{% static 'images/chat.png' %} " class="like-comment-image"/>
-                                {{photo.model_relation.count}}
+                                <img src="http://127.0.0.1:8000/static/images/chat.png" class="like-comment-image"/>
+                                ${element.comment_count}
                             </div>
                             <div class="right-element">
-                                {% if user.is_authenticated%}
-                                    <form action="{% url 'like' photo.pk  %}" method="post">
-                                        {% csrf_token %}
-                                        <button type="submit" >
-                                            <img src="{% static 'images/heart.png' %}" class="like-comment-image"/>
-                                            {{photo.likes.count}}
+                                <form id="like-form">
+                                        <button type="button" id="like-${element.id}" onclick="fetchLikes(${element.id})" style="background-color: transparent; border: none; " >
+                                            <img src="http://127.0.0.1:8000/static/images/heart.png" class="like-comment-image"/>
                                         </button>
-                                    </form>
-                                {%else%}
-                                <img src="{% static 'images/heart.png' %}" class="like-comment-image"/>
-                                {{photo.likes.count}}
-                                {%endif%}
+                                            <span  id="like-count-${element.id}">${element.like_count}</span>
+                                </form>
+                                                                
                             </div>
-                        </div>
-                    </div> 
-            {% endfor %}
-    </div>
-{% endblock %}
+                </div>
+                </div>
+                
+                `
+                if(!(localStorage.getItem('token'))) {
+                    
+                    button=document.getElementById(`like-${element.id}`);
+                    if(button){
+                        console.log('enabled');
+                        button.disabled=true;
+                    }
+                }
+                                                
+
+                if(!(localStorage.getItem('username')===element.user.username)){
+                    state=document.getElementById('state');
+                    if(state){
+                        state.remove();
+                    }                                 
+                }
+                
+            });
+
+        }
+        async function fetchLikes(photo_id) {
+            const response =await fetch('http://127.0.0.1:8000/api/like/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify({
+                    photo_id: photo_id
+                })
+            });
+
+
+            const data = await response.json();
+            if(data.like_count){
+                console.log('like');
+                
+                like_count=document.getElementById(`like-count-${photo_id}`);
+                if(like_count){           
+                    like_count.textContent=data.like_count;
+                }   
+            }
+            else{
+                console.log('dislike');
+                like_count=document.getElementById(`like-count-${photo_id}`);
+                if(like_count){           
+                    console.log(`like-count-${photo_id}`);
+                    like_count.textContent=Number(document.getElementById(`like-count-${photo_id}`).textContent)-1;
+                }
+                
+            }
+
+        }        
+        
+        
+
+        document.addEventListener('DOMContentLoaded',()=>{
+            FetchUser();
+            FetchUserPhoto();
+            document.getElementById('prev-button').addEventListener('click', () => {
+                page=document.getElementById('prev-button').value;
+                sort_field = document.getElementById('filter').value;
+                sort_direction = document.getElementById('filter_direction').value;
+                status_bar=document.getElementById('status_bar');
+                if(status_bar){
+                    FetchUserPhoto(page, 10, sort_direction, sort_field,status_bar.value);                  
+                }
+                else{
+                    FetchUserPhoto(page, 10, sort_direction, sort_field);
+                }
+            });
+            document.getElementById('next-button').addEventListener('click', () => {
+                page=document.getElementById('next-button').value;
+                sort_field = document.getElementById('filter').value;
+                sort_direction = document.getElementById('filter_direction').value;
+                if(status_bar){
+                    FetchUserPhoto(page, 10, sort_direction, sort_field,status_bar.value);                  
+                }
+                else{
+                    FetchUserPhoto(page, 10, sort_direction, sort_field);
+                }
+            });
+            document.getElementById('filter_direction').addEventListener('change', () => {
+                const sort_field = document.getElementById('filter').value;
+                const sort_direction = document.getElementById('filter_direction').value;
+                const status_bar = document.getElementById('status_bar');
+                if(status_bar){
+                    FetchUserPhoto(1, 10, sort_direction, sort_field,status_bar.value);
+                }
+                else{
+                    FetchUserPhoto(1, 10, sort_direction, sort_field);
+                }
+            });
+
+            document.getElementById('filter').addEventListener('change', () => {
+                const sort_field = document.getElementById('filter').value;
+                const sort_direction = document.getElementById('filter_direction').value;
+                const status_bar = document.getElementById('status_bar');
+                if(status_bar){
+                    FetchUserPhoto(1, 10, sort_direction, sort_field,status_bar.value);
+                }
+                else{
+                    FetchUserPhoto(1, 10, sort_direction, sort_field);
+                }
+            });
+
+            document.getElementById('status_bar').addEventListener('change', () => {
+                const status_bar = document.getElementById('status_bar').value;
+                const sort_field = document.getElementById('filter').value;
+                const sort_direction = document.getElementById('filter_direction').value;
+                FetchUserPhoto(1, 10, sort_direction, sort_field,status_bar);
+            });
+
+            if(!(localStorage.getItem('username')===localStorage.getItem('current_username')))
+            {
+                status_bar=document.getElementById('status_bar');
+                if(status_bar){
+                    status_bar.remove();                    
+                };               
+            }
+
+            
+            
+        })
+    </script>
+
+{%endblock%}
