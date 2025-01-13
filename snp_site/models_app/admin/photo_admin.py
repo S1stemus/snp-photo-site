@@ -18,13 +18,18 @@ class PhotoAdmin(admin.ModelAdmin):
 
     def approve(self, request, queryset):
         for photo in queryset:
-            if(photo.state==State.APPROVED):
-                messages.add_message(request,messages.INFO,f'Фото с id {photo.id} уже имеет статус одобрено')
+            if(photo.state!=State.WAITING):
+                messages.add_message(request,messages.WARNING,f'Фото с id {photo.id} уже имеет статус отличный от ожидания')
                 continue
             photo.flow.approve()
 
     def reject(self, request, queryset):
-        queryset.reject()
+        for photo in queryset:
+            if(photo.state!=State.WAITING):
+                messages.add_message(request,messages.INFO,f'Фото с id {photo.id} уже имеет статус отличный от ожидания')
+                continue
+            photo.flow.reject()
+        
 
 
    
