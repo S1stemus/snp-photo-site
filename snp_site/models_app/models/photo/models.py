@@ -34,6 +34,6 @@ class Photo(models.Model):
         return mark_safe(f'<img src="{self.photo.url}" width="400" height=auto />')
     admin_photo.short_description = 'Фото'
     admin_photo.allow_tags = True
+     
+        
 
-    def change_photo(sejf,name,photo,description,id):
-        pass
