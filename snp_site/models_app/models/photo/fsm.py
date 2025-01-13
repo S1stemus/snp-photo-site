@@ -22,16 +22,24 @@ class Flow():
     @state.on_success()
     def _on_transition_success(self, descriptor, source, target):
         self.object.save()
-    @state.transition(source=(State.WAITING,), target=State.APPROVED)
+    @state.transition(source=(State.WAITING), target=State.APPROVED)
     def approve(self):
         pass
 
-    @state.transition(source=(State.WAITING,), target=State.REJECTED)
+    @state.transition(source=(State.WAITING), target=State.REJECTED)
     def reject(self):
         pass
 
-    @state.transition(source=(State.APPROVED,), target=State.WAITING)
-    def update_waiting(self):
+    @state.transition(source=(State.APPROVED,State.REJECTED,State.ON_DELETE,State.WAITING), target=State.WAITING)
+    def update_to_waiting(self):
         pass
+
+    
+
+
+
+    
+
+
 
     
