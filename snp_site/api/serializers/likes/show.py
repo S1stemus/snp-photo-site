@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from models_app.models import Like
 
-class LikeSerializer(serializers.ModelSerializer):
+class LikeShowSerializer(serializers.ModelSerializer):
     like_count = serializers.SerializerMethodField()
 
     def get_like_count(self, obj)->int:
