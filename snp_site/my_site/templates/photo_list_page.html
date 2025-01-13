@@ -10,14 +10,14 @@
             <option value="popularity">Popular</option>
         </select>
     </form>
-    <form   class="mb-4">
+    <form   class="mb-4" >
         <select name="filter" id="filter_direction"  class="form-select">         
             <option value="asc">Ascending</option>
             <option value="desc">Descending</option>
         </select>
-    </form>
-
-    
+    </form class="mb-4" style="margin-bottom: 10px">
+        <input  id="search" class="form-control" placeholder="Поиск">
+    </form>   
     <div class="row" id='row'>
        
     </div>
@@ -34,21 +34,39 @@
 
 
 <script>
-    async function likePhoto(id) {
-        const response = await fetch('http://127.0.0.1:8000/api/likes/', {
+    async function likePhoto(photo_id) {
+        if(!localStorage.getItem('token')) return;
+        const response = await fetch('http://127.0.0.1:8000/api/like/', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
             },
             body: JSON.stringify({
-                photo_id: id
+                photo_id: photo_id
             })
         });
         const data = await response.json();
-        return data;
+        if(data.like_count){
+            console.log('like');
+            
+            like_count=document.getElementById(`like-count-${photo_id}`);
+            if(like_count){           
+                like_count.textContent=data.like_count;
+            }   
+        }
+        else{
+            console.log('dislike');
+            like_count=document.getElementById(`like-count-${photo_id}`);
+            if(like_count){           
+                console.log(`like-count-${photo_id}`);
+                like_count.textContent=Number(document.getElementById(`like-count-${photo_id}`).textContent)-1;
+            }           
+        }
+        
     }
-    async function fetchPhotos(page = 1, per_page = 10, sort_field = 'created_at', sort_direction = 'desc') {
-        const url = `http://127.0.0.1:8000/api/photos/?page=${page}&per_page=${per_page}&sort_direction=${sort_direction}&sort_field=${sort_field}`;
+    async function fetchPhotos(page = 1, per_page = 10, sort_field = 'created_at', sort_direction = 'desc',search_field='') {
+        const url = `http://127.0.0.1:8000/api/photos/?page=${page}&per_page=${per_page}&sort_direction=${sort_direction}&sort_field=${sort_field}&search_field=${search_field}`;
         const response = await fetch(url, {
             method: 'GET',
             headers: {
@@ -107,9 +125,13 @@
                                 <span>${element.comment_count}</span>
                             </div>
                             <div id="likes" >
-                                
-                                <img src="http://127.0.0.1:8000/static/images/heart.png" class="like-comment-image" alt="likes" />
-                                ${element.like_count}
+                        
+                            <form id="like-form">
+                                <button type="button"  id="like-${element.id}" onclick="likePhoto(${element.id}) " style="background-color: transparent; border: none; ">
+                                    <img src="http://127.0.0.1:8000/static/images/heart.png" class="like-comment-image" alt="likes" />
+                                    <span id="like-count-${element.id}">${element.like_count}</span>
+                                </button>
+                            </form>
                             </div>
                         </div>
                     </div>
@@ -118,7 +140,14 @@
             ;
 
 
-            token = localStorage.getItem('token');
+            if(!(localStorage.getItem('token'))) {
+                    
+                button=document.getElementById(`like-${element.id}`);
+                if(button){
+                    console.log('enabled');
+                    button.disabled=true;
+                }
+            }
 
             
             document.getElementById('row').appendChild(card);
@@ -136,27 +165,39 @@
         document.getElementById('filter').addEventListener('change', () => {
             const sort_field = document.getElementById('filter').value;
             const sort_direction = document.getElementById('filter_direction').value;
-            fetchPhotos(1, 10, sort_field, sort_direction);
+            const search_field = document.getElementById('search').value;
+            fetchPhotos(1, 10, sort_field, sort_direction,search_field);
+        });
+
+        document.getElementById('search').addEventListener('keydown', () => {
+
+            if(event.key==='Enter'){
+                const sort_field = document.getElementById('filter').value;
+                const sort_direction = document.getElementById('filter_direction').value;
+                const search_field = document.getElementById('search').value;
+                fetchPhotos(1, 10, sort_field, sort_direction,search_field);
+            }
         });
 
         document.getElementById('filter_direction').addEventListener('change', () => {
             const sort_field = document.getElementById('filter').value;
             const sort_direction = document.getElementById('filter_direction').value;
-
-
-            fetchPhotos(1, 10, sort_field, sort_direction);
+            const search_field = document.getElementById('search').value;
+            fetchPhotos(1, 10, sort_field, sort_direction,search_field);
         });
         document.getElementById('prev-button').addEventListener('click', () => {
             page=document.getElementById('prev-button').value;
             sort_field = document.getElementById('filter').value;
             sort_direction = document.getElementById('filter_direction').value;
-            fetchPhotos(page, 10, sort_field, sort_direction);
+            search_field = document.getElementById('search').value;
+            fetchPhotos(page, 10, sort_field, sort_direction,search_field);
         });
         document.getElementById('next-button').addEventListener('click', () => {
             page=document.getElementById('next-button').value;
             sort_field = document.getElementById('filter').value;
             sort_direction = document.getElementById('filter_direction').value;
-            fetchPhotos(page, 10, sort_field, sort_direction);
+            search_field = document.getElementById('search').value;
+            fetchPhotos(page, 10, sort_field, sort_direction,search_field);
         });
     });
 </script>
