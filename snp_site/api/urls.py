@@ -1,4 +1,4 @@
-from api.views.photo import RetreivePhotoView
+from api.views.photo import RetreivePhotoView, UpdateDeletePhotoView
 from api.views.comment import RetreiveCommentView
 from django.urls import path
 from api.views.comment import RetreiveCommentView
@@ -11,6 +11,7 @@ from api.views.user import *
 
 urlpatterns=[
     path('photo/<int:id>/', RetreivePhotoView.as_view()),
+    path('photo/actions/<int:id>',UpdateDeletePhotoView.as_view()),
     path('comments/<int:id>/', RetreiveCommentView.as_view()),
     path('comments/', PostCommentView.as_view()),
     path('like/', LikePostView.as_view()),

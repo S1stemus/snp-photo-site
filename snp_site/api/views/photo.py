@@ -3,8 +3,10 @@ from requests import delete
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from service_objects.services import ServiceOutcome
-from api.serializers.photos.photo_serializer import PhotoSerializer
-from api.serializers.photos.photo_post_serializer import PhotoPostSerializer
+from api.serializers.photos.show import PhotoShowSerializer
+from api.serializers.photos.create import PhotoCreateSerializer
+from api.serializers.photos.update import PhotoUpdateSerializer
+from api.serializers.photos.list import PhotoListSerializer
 from api.services.photo.show import ShowPhotoService
 from models_app.models.photo.models import Photo
 from drf_spectacular.utils import extend_schema
@@ -23,6 +25,12 @@ from drf_spectacular.types import OpenApiTypes
 
 
 class ListCreatePhotoView(APIView):
+    @classmethod
+    def _fetch_query_params_dict(cls, request) -> dict:
+        return {
+            key: value if len(value) > 1 else value[0]
+            for key, value in dict(request.query_params).items()
+        }
 
     permission_classes = [IsAuthenticated]
 
@@ -32,14 +40,14 @@ class ListCreatePhotoView(APIView):
         tags=['Фотографии'],
         summary='Создает фотографию',
         description='Создает фотографию',
-        request=PhotoPostSerializer,
+        request=PhotoCreateSerializer,
         responses={
-            200: PhotoSerializer
+            200: PhotoShowSerializer
         }
     )
     def post(self, request, *args, **kwargs):
         outcome=ServiceOutcome(CreatePhotoService, {'current_user':request.user}|request.data.dict(), request.FILES)
-        return Response(PhotoSerializer(outcome.result).data)
+        return Response(PhotoShowSerializer(outcome.result).data)
     
     
     permission_classes = [AllowAny]
@@ -49,9 +57,16 @@ class ListCreatePhotoView(APIView):
         summary='Возвращает все фотографии',
         description='Возвращает все фотографии',
         responses={
-            200: PhotoSerializer
+            200: PhotoListSerializer(many=True)
         },
         parameters=[
+            OpenApiParameter(
+                name='search_field',
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Поиск по строке',
+            ),
             OpenApiParameter(
                 name='page',
                 type=OpenApiTypes.INT,
@@ -72,6 +87,7 @@ class ListCreatePhotoView(APIView):
                 name='sort_field',
                 type=OpenApiTypes.STR,
                 location=OpenApiParameter.QUERY,
+                enum=ListPhotoService.SortFields.values,
                 required=False,
                 description='Поле сортировки',
                 default='created_at'
@@ -81,6 +97,7 @@ class ListCreatePhotoView(APIView):
                 type=OpenApiTypes.STR,
                 location=OpenApiParameter.QUERY,
                 required=False,
+                enum=('asc','desc'),
                 description='Направление сортировки',
                 default='desc'
                 
@@ -91,9 +108,10 @@ class ListCreatePhotoView(APIView):
         
     )
     def get(self, request, *args, **kwargs):
+        data=self._fetch_query_params_dict(request)
+        print(data)
 
-        outcome=ServiceOutcome(ListPhotoService,request.query_params.dict())
-        print(outcome.result)
+        outcome=ServiceOutcome(ListPhotoService,data)
         return Response(
         {
             "pagination": CustomPagination(
@@ -101,12 +119,12 @@ class ListCreatePhotoView(APIView):
                 current_page=outcome.service.cleaned_data["page"],
                 per_page=outcome.service.cleaned_data["per_page"],
             ).to_json(),
-            "results": PhotoSerializer(
+            "results": PhotoListSerializer(
                 outcome.result.object_list, many=True
             ).data,
         },
-    status=status.HTTP_200_OK,
-)
+        status=status.HTTP_200_OK,
+        )
 
 
 class RetreivePhotoView(APIView):
@@ -118,17 +136,18 @@ class RetreivePhotoView(APIView):
         summary='Возвращает фотографию по id',
         description='Возвращает фотографию по id',
         responses={
-            200: PhotoSerializer
+            200: PhotoShowSerializer
         }
        
     )    
     def get(self, request, *args, **kwargs):
         outcome=ServiceOutcome(ShowPhotoService,{'id':kwargs['id']} )
-        return Response(PhotoSerializer(outcome.result).data)
+        return Response(PhotoShowSerializer(outcome.result).data)
     
    
     
-   
+class  UpdateDeletePhotoView(APIView):
+    permission_classes = [IsAuthenticated]
 
 
     @extend_schema(
@@ -136,12 +155,11 @@ class RetreivePhotoView(APIView):
         summary='Удаляет фотографию по id',
         description='Удаляет фотографию по id',
         responses={
-            200: PhotoSerializer
+            200: None
         }
     )    
-    def delete(self, request, *args, **kwargs):
-        self.permission_classes = [IsAuthenticated]  # Устанавливаем разрешения для этого метода
-        self.check_permissions(request)  # Проверяем разрешения
+
+    def delete(self, request, *args, **kwargs):       
         outcome=ServiceOutcome(DeletePhotoService,{'id':kwargs['id']} )
         if outcome.result:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -152,15 +170,15 @@ class RetreivePhotoView(APIView):
         summary='Обновляет фотографию по id',
         description='Обновляет фотографию по id',
         responses={
-            200: PhotoSerializer
+            200: PhotoShowSerializer
         },
-        request=PhotoPostSerializer
+        request=PhotoUpdateSerializer
     )    
     def put(self, request, *args, **kwargs):
         self.permission_classes = [IsAuthenticated]  # Устанавливаем разрешения для этого метода
         self.check_permissions(request)  # Проверяем разрешения
         outcome=ServiceOutcome(UpdatePhotoService,{'id':kwargs['id'],'current_user':request.user} | request.data.dict(), request.FILES,)
-        return Response(PhotoSerializer(outcome.result).data)
+        return Response(PhotoShowSerializer(outcome.result).data)
     
    
     
