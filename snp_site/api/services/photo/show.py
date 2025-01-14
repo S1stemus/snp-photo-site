@@ -6,6 +6,7 @@ from models_app.models import Photo
 from service_objects.errors import NotFound
 from models_app.models.user import User
 from service_objects.fields import ModelField
+from django.db.models import Count
 
 
 class ShowPhotoService(ServiceWithResult):
@@ -27,7 +28,7 @@ class ShowPhotoService(ServiceWithResult):
     @lru_cache
     def _photo(self):
         try:
-            return Photo.objects.get(id=self.cleaned_data['id'])
+            return Photo.objects.filter(id=self.cleaned_data['id']).annotate(comment_count=Count('model_relation')).annotate(like_count=Count('like')).first()
         except Photo.DoesNotExist:
             return None
 

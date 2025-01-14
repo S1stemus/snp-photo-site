@@ -309,8 +309,8 @@
     
     
         const data = await response.json();
-        if(data.like_count){
-            renderLikes(data.like_count);
+        if(data.id){
+            renderLikes(Number(document.getElementById('like-count').textContent)+1);
         }
         else{
             renderLikes(Number(document.getElementById('like-count').textContent)-1);

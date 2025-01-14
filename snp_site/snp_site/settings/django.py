@@ -22,8 +22,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env =environ.Env()
 environ.Env.read_env()
 
-SECRET_KEY =env('SECRET_KEY',cast=str) 
-DEBUG =env('DEBUG', default=False,cast=bool)
+SECRET_KEY ='django-insecure-n_^%^y0vyl0z*39f0i-5)k4pk64)g3*9q$r+!-8@)^yem$=pa& '
+DEBUG =True
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 ALLOWED_HOSTS = []
 
