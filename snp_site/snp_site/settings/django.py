@@ -15,6 +15,7 @@ from re import S
 from telnetlib import LOGOUT
 import environ
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -208,3 +209,37 @@ CORS_ALLOW_ALL_ORIGINS = True
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'db_queries.log'),
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {  # Логирование запросов к базе данных
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
