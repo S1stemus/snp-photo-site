@@ -16,6 +16,10 @@ djangorestframework-simplejwt = "*"
 django-cors-headers = "*"
 channels = "*"
 django-imagekit = "*"
+django-environ = "*"
+psycopg2 = "*"
+rich = "*"
+django-log-request-id = "*"
 
 [dev-packages]
 

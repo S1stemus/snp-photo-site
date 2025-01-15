@@ -33,6 +33,7 @@ class ListPhotoService(ServiceWithResult):
         if self.is_valid():
             self.result = self._photos
         return self
+    
     @property
     def _photos(self):
         try:
@@ -50,7 +51,8 @@ class ListPhotoService(ServiceWithResult):
 
     @property
     def _filtered_photos(self):
-        photos = Photo.objects.filter(state=State.APPROVED).annotate(comment_count=Count('model_relation')).annotate(like_count=Count('like'))
+        photos = Photo.objects.filter(state=State.APPROVED).annotate(comment_count = Count('model_relation')).annotate(like_count=Count('like')).select_related('user')
+
 
         if self.cleaned_data.get('search_field'):
             photos=photos.filter(
