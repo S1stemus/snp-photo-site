@@ -40,7 +40,7 @@ class RetrieveCommentsByIdService(ServiceWithResult):
 
     @property
     def _filtered_comments(self):
-            return Comment.objects.filter(object_id=self.cleaned_data['id']).order_by('created_at')        
+            return Comment.objects.filter(object_id=self.cleaned_data['id']).order_by('created_at').select_related('user')        
 
     def _validate_comment_id(self):
         if (not Comment.objects.filter(object_id=self.cleaned_data['id']).exists()) and (not Photo.objects.filter(id=self.cleaned_data['id']).exists()):

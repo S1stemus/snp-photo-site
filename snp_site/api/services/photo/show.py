@@ -28,7 +28,7 @@ class ShowPhotoService(ServiceWithResult):
     @lru_cache
     def _photo(self):
         try:
-            return Photo.objects.filter(id=self.cleaned_data['id']).annotate(comment_count=Count('model_relation')).annotate(like_count=Count('like')).first()
+            return Photo.objects.filter(id=self.cleaned_data['id']).annotate(comment_count=Count('model_relation')).select_related('user').annotate(like_count=Count('like')).first().select_related('user')
         except Photo.DoesNotExist:
             return None
 
