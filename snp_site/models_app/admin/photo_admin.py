@@ -4,6 +4,8 @@ from django.utils.safestring import mark_safe
 from models_app.models.photo.fsm import State
 from models_app.models.photo.fsm import Flow
 from django.contrib import messages
+from api.tasks import *
+
 
 
 
@@ -29,6 +31,9 @@ class PhotoAdmin(admin.ModelAdmin):
                 messages.add_message(request,messages.INFO,f'Фото с id {photo.id} уже имеет статус отличный от ожидания')
                 continue
             photo.flow.reject()
+            delete_photo(photo.id)
+
+            
         
 
 

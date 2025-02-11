@@ -7,6 +7,8 @@ from service_objects.errors import NotFound
 from models_app.models.user import User
 from service_objects.fields import ModelField
 from django.db.models import Count
+from api.tasks import print_word
+from datetime import timedelta
 
 
 class ShowPhotoService(ServiceWithResult):
@@ -22,13 +24,14 @@ class ShowPhotoService(ServiceWithResult):
     def process(self) -> "ServiceWithResult":
         self.run_custom_validations()
         if self.is_valid():
+            print_word.apply_async(args = ['nice'] , countdown = timedelta(minutes=1).total_seconds())
             self.result = self._photo 
         return self
     @property
     @lru_cache
     def _photo(self):
         try:
-            return Photo.objects.filter(id=self.cleaned_data['id']).annotate(comment_count=Count('model_relation')).select_related('user').annotate(like_count=Count('like')).first().select_related('user')
+            return Photo.objects.filter(id=self.cleaned_data['id']).annotate(comment_count=Count('model_relation')).annotate(like_count=Count('like')).select_related('user').first()
         except Photo.DoesNotExist:
             return None
 

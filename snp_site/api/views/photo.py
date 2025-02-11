@@ -1,5 +1,3 @@
-from tkinter.filedialog import Open
-from requests import delete
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from service_objects.services import ServiceOutcome
@@ -8,7 +6,6 @@ from api.serializers.photos.create import PhotoCreateSerializer
 from api.serializers.photos.update import PhotoUpdateSerializer
 from api.serializers.photos.list import PhotoListSerializer
 from api.services.photo.show import ShowPhotoService
-from models_app.models.photo.models import Photo
 from drf_spectacular.utils import extend_schema
 from api.services.photo.delete import DeletePhotoService
 from api.services.photo.update import UpdatePhotoService
@@ -17,10 +14,10 @@ from rest_framework.permissions import AllowAny
 from api.services.photo.list import ListPhotoService
 from api.services.photo.create import CreatePhotoService
 from rest_framework import status
-from rest_framework.pagination import LimitOffsetPagination
 from utils.pagination.custom_pagination import CustomPagination
 from drf_spectacular.utils import OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
+from api.tasks import *
 
 
 
@@ -101,15 +98,12 @@ class ListCreatePhotoView(APIView):
                 description='Направление сортировки',
                 default='desc'
                 
-                )
-           
-            
-        ]
-        
+                )                     
+        ]        
     )
     def get(self, request, *args, **kwargs):
         data=self._fetch_query_params_dict(request)
-        print(data)
+        
 
         outcome=ServiceOutcome(ListPhotoService,data)
         return Response(

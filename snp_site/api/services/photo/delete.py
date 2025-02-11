@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from models_app.models.user import User
 from service_objects.fields import ModelField
+from api.tasks import *
+from datetime import timedelta
 
 class DeletePhotoService(ServiceWithResult):
 
@@ -24,9 +26,7 @@ class DeletePhotoService(ServiceWithResult):
     @property
     def _photo(self):
         try:
-           photo=Photo.objects.get(id=self.cleaned_data['id'])
-           photo.delete()
-           return (photo)
+           delete_photo.apply_async(self.cleaned_data['id'],countdown=timedelta(minutes=1))
         except Photo.DoesNotExist:
             return None
 

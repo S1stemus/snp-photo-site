@@ -1,10 +1,9 @@
 from service_objects.services import ServiceWithResult
 from django import forms
 from models_app.models import Photo
-from service_objects.errors import NotFound
 from models_app.models.user import User
 from service_objects.fields import ModelField
-from models_app.models.photo.fsm import State
+from django.db.models import Count
 
 
 
@@ -22,11 +21,12 @@ class CreatePhotoService(ServiceWithResult):
         return self
     @property
     def _create_photo(self):
-        photo = Photo.objects.create(user=self.cleaned_data['current_user'],
+        Photo.objects.create(user=self.cleaned_data['current_user'],
                                      photo=self.cleaned_data['photo'],
                                      description=self.cleaned_data['description'],
                                      name =self.cleaned_data['name']
                                      )
+        photo=Photo.objects.filter(user=self.cleaned_data['current_user']).annotate(comment_count=Count('model_relation')).annotate(like_count=Count('like')).select_related('user').first()
         return photo
 
  
