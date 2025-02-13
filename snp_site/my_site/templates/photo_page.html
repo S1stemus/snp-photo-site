@@ -20,29 +20,29 @@
         </form>
         <form id="like-form" class="mb-3">
             <button type="submit" class="btn btn-outline-danger" id="like-button">
-                <img src="http://127.0.0.1:8000/static/images/heart.png" class="like-comment-image" alt="Лайк"/> 
+                <img src="http://127.0.0.1:8000/static/images/heart.png" class="like-comment-image" alt="Лайк"/>
                 <span class="like-count" id="like-count"></span>
             </button>
         </form>
        </div>
        <div id="user-panel" class="mb-3">
-         
+
        </div>
 
         <h3>Комментарии:</h3>
         <div id="comment-container">
             <div id="comments">
-                
+
             </div>
             <form id="pagination-form" class="d-flex justify-content-center mt-4">
                 <input type="hidden" name="page" id="page" value="1">
                 <input type="hidden" name="per_page" id="per_page" value="10">
                 <input type="button" id="prev-button" class="btn btn-primary me-2" value="Previous">
-                <span id="current-page"></span> 
+                <span id="current-page"></span>
                 <input type="button" id="next-button" class="btn btn-primary ms-2" value="Next" >
             </form>
         </div>
-        
+
     </div>
 </div>
 {% endblock %}
@@ -55,7 +55,7 @@
         const pathSegments = url.pathname.split('/'); // Разделяем путь по символу '/'
         const photoId = pathSegments[pathSegments.length - 2]; // Извлекаем предпоследний элемент
         return photoId;
-        
+
     }
 
     async function fetchphoto() {
@@ -63,7 +63,7 @@
         const response = await fetch(url, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'               
+                'Content-Type': 'application/json'
             }
         });
         const data = await response.json();
@@ -80,11 +80,11 @@
     document.addEventListener('DOMContentLoaded', () => {
         fetchphoto();
     });
-    
-    
-    
+
+
+
 </script>
-<script>    
+<script>
     async function fetchComments(photo_id, page) {
         const response = await fetch('http://127.0.0.1:8000/api/comments/' + photo_id +'/?page=' + page + '&per_page=4', {
             method: 'GET',
@@ -107,19 +107,19 @@
             console.log(next);
             document.getElementById('next-button').style.visibility = 'visible';
             document.getElementById('next-button').disabled = false;
-            document.getElementById('next-button').value=next;                        
+            document.getElementById('next-button').value=next;
         }
         if(prev==null){
             document.getElementById('prev-button').style.visibility = 'hidden';
             document.getElementById('prev-button').disabled = true;
         }
         else{
-           
+
             console.log(prev);
             document.getElementById('prev-button').style.visibility = 'visible';
             document.getElementById('prev-button').disabled = false;
             document.getElementById('prev-button').value=prev;
-            
+
         }
         document.getElementById('current-page').textContent = `Страница ${data.pagination.current_page} из ${data.pagination.total_pages}`;
         return data;
@@ -145,7 +145,7 @@
         }
         addComment(data, li, level+1);
 
-        
+
     }
     function checkResponse(response) {
         if (response.status === 401) {
@@ -163,9 +163,9 @@
         // Создаем ul для комментариев
         const ulcomment = document.createElement('ul');
         ulcomment.classList.add('list-unstyled');
-    
+
         // Создаем li для нового комментария
-        const newComment = document.createElement('li');        
+        const newComment = document.createElement('li');
         newComment.classList.add('mb-4');
         newComment.id = `comment-${comment.id}`; // Исправлено: добавлены обратные кавычки для шаблонной строки
         commentCard= document.createElement('div');
@@ -175,12 +175,12 @@
         if(comment.comments){
             lenght=comment.comments.length;
         }
-        
-        if(token){        
+
+        if(token){
             if(localStorage.getItem('username') == comment.user.username){
                 console.log(comment.comments)
-                if(lenght>0){     
-                    console.log('u1')                         
+                if(lenght>0){
+                    console.log('u1')
                         newComment.innerHTML = `
                         <div class="card p-3"  style="margin-left: ${level * 20}px; margin-top:10px"  id='comment-card-${comment.id}'>
                         <a href=http://127.0.0.1:8000/users/page/${comment.user.id}/>
@@ -194,13 +194,13 @@
                                         <input type="text" name="comment" class="form-control" placeholder="Ваш комментарий..." required>
                                         <button id="update-button-${comment.id}" type="submit" class="btn btn-primary">Редактировать</button>
                                         <button id="button-${comment.id}" type="submit" class="btn btn-primary">Отправить</button>
-                                    </div>  
+                                    </div>
                         </form>
                     </div
-                    `  ;              
+                    `  ;
                 }
                 else{
-                    console.log('u2') 
+                    console.log('u2')
                     newComment.innerHTML = `
                         <div class="card p-3"  style="margin-left: ${level * 20}px; margin-top:10px"  id='comment-card-${comment.id}'>
                     <a href=http://127.0.0.1:8000/users/page/${comment.user.id}/>
@@ -215,14 +215,14 @@
                                     <button id="update-button-${comment.id}" type="submit" class="btn btn-primary">Редактировать</button>
                                     <button id="delete-button-${comment.id}" type="submit" class="btn btn-danger">Удалить</button>
                                     <button id="button-${comment.id}" type="submit" class="btn btn-primary">Отправить</button>
-                                </div>  
+                                </div>
                     </form>
                 </div>
                     `;
                 }
             }
             else{
-                console.log('u3') 
+                console.log('u3')
                 newComment.innerHTML = `
                 <div class="card p-3"  style="margin-left: ${level * 20}px; margin-top:10px"  id='comment-card-${comment.id}'>
             <a href=http://127.0.0.1:8000/users/page/${comment.user.id}/>
@@ -235,7 +235,7 @@
                         <div class="input-group">
                             <input type="text" name="comment" class="form-control" placeholder="Ваш комментарий..." required>
                             <button id="button-${comment.id}" type="submit" class="btn btn-primary">Отправить</button>
-                        </div>  
+                        </div>
             </form>
         </div>
             `;
@@ -243,7 +243,7 @@
             }
         }
         else{
-            console.log('u4') 
+            console.log('u4')
             newComment.innerHTML = `
                 <div class="card p-3"  style="margin-left: ${level * 20}px; margin-top:10px"  id='comment-card-${comment.id}'>
             <a href=http://127.0.0.1:8000/users/page/${comment.user.id}/>
@@ -255,18 +255,18 @@
                         <input type="hidden" name="content_type" value="comment">
                         <div class="input-group">
                             <button id="button-${comment.id}" type="submit" class="btn btn-primary" hidden>Отправить</button>
-                        </div>  
+                        </div>
             </form>
         </div>
             `;
-            
+
         }
 
-        
-        
+
+
         // Добавляем новый комментарий в ul
         ulcomment.appendChild(newComment);
-        
+
         element.appendChild(ulcomment);
         button = document.getElementById(`button-${comment.id}`);
         if(button) {
@@ -274,25 +274,25 @@
             event.preventDefault();
             text = document.getElementById(`comment-form-${comment.id}`).querySelector('input[name="comment"]').value;
             li=document.getElementById(`comment-${comment.id}`);
-            CreateComments(comment.id,text,'comment',li,level);          
+            CreateComments(comment.id,text,'comment',li,level);
         });
         DeleteButtonAction(comment.id);
         UpdateButtonAction(comment.id);
-        
+
         // Проверяем, есть ли вложенные комментарии
         if (comment.comments && comment.comments.length > 0) {
-            comment.comments.forEach(childComment => {               
+            comment.comments.forEach(childComment => {
                 addComment(childComment, newComment, level + 1); // Передаем новый комментарий как элемент
             });
         }
-        
+
         // Добавляем ul с комментариями к родительскому элементу
-        
-        
-        
+
+
+
 
         }
-        
+
     }
     async function fetchLikes(photo_id) {
         const response =await fetch('http://127.0.0.1:8000/api/like/', {
@@ -306,8 +306,8 @@
             })
         });
         checkResponse(response);
-    
-    
+
+
         const data = await response.json();
         if(data.id){
             renderLikes(Number(document.getElementById('like-count').textContent)+1);
@@ -315,12 +315,12 @@
         else{
             renderLikes(Number(document.getElementById('like-count').textContent)-1);
         }
-       
+
     }
 
     function renderLikes(count) {
         like_count=document.getElementById('like-count');
-        if(like_count){           
+        if(like_count){
             like_count.textContent=count;
         }
     }
@@ -329,11 +329,11 @@
         token = localStorage.getItem('token');
         if (!token) {
             document.getElementById('post-form').innerHTML = `
-            <img src="http://127.0.0.1:8000/static/images/heart.png" class="like-comment-image" alt="Лайк"/> 
+            <img src="http://127.0.0.1:8000/static/images/heart.png" class="like-comment-image" alt="Лайк"/>
             <span class="like-count" id="like-count">${like}</span>
             <img src="http://127.0.0.1:8000/static/images/chat.png" class="like-comment-image" alt="Комментарий"/>
             <span class="comment-count" id="comment-count">${comment}</span>
-            `;  
+            `;
         }
         else{
             renderLikes(like);
@@ -341,20 +341,20 @@
     }
 
 
-      
-    
+
+
     function renderComment(page=1) {
         comments_box=document.getElementById('comments');
         comments_box.innerHTML='';
         post=document.getElementById('post-form');
-        
+
         photo_id = getPhotoId();
         data=fetchComments(photo_id,page);
-        
+
         data.then(comments => {
             comments.results.forEach(comment => {
                 addComment(comment,comments_box,0);
-                 
+
             });
         });
     }
@@ -381,12 +381,12 @@
                 card=document.getElementById(`comment-card-${comment_id}`);
                 if(card) {
                     card.remove();
-                }   
+                }
             });
         }
     }
 
-    
+
     document.addEventListener('DOMContentLoaded', () => {
 
         renderComment();
@@ -398,7 +398,7 @@
                 photo_id = getPhotoId();
                 div=document.getElementById('comments');
                 CreateComments(photo_id,text,'photo',div,-1);
-            });       
+            });
         }
         likebutton=document.getElementById('like-button');
         if(likebutton){
@@ -406,16 +406,16 @@
                 event.preventDefault();
                 photo_id = getPhotoId();
                 fetchLikes(photo_id);
-            });       
+            });
         }
         document.getElementById('prev-button').addEventListener('click', async function(event) {
             event.preventDefault();
-            page=document.getElementById('prev-button').value;          
+            page=document.getElementById('prev-button').value;
             renderComment(page);
         });
         document.getElementById('next-button').addEventListener('click', async function(event)  {
             event.preventDefault();
-            page=document.getElementById('next-button').value;       
+            page=document.getElementById('next-button').value;
             renderComment(page);
         });
 
@@ -433,7 +433,7 @@
             })
         });
         checkResponse(response);
-        text=document.getElementById(`comment-text-${comment_id}`);  
+        text=document.getElementById(`comment-text-${comment_id}`);
         if(text){
             text.textContent=comment_text;
         }
@@ -447,19 +447,19 @@
                 event.preventDefault();
                 text=document.getElementById(`comment-form-${comment_id}`).querySelector('input[name="comment"]').value;
                 console.log(text.value);
-                if(text){                   
-                    UpdateComment(comment_id,text);               
+                if(text){
+                    UpdateComment(comment_id,text);
                 }
             });
         }
     }
 
-    
 
-   
 
-    
 
-    
-</script> 
+
+
+
+
+</script>
 {% endblock %}

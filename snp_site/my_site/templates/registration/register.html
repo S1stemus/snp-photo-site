@@ -31,16 +31,16 @@
         $(document).ready(function() {
             $('#register-button').click(function(event) {
                 event.preventDefault();
-                
+
                 var username = $('#username').val();
                 var password = $('#password').val();
                 var avatar = $('#avatar').prop('files')[0];
-                
+
                 var formData = new FormData();
                 formData.append('username', username);
                 formData.append('password', password);
                 formData.append('avatar', avatar);
-                
+
                 $.ajax({
                     url: 'http://127.0.0.1:8000/api/users/register',
                     type: 'POST',
@@ -62,6 +62,6 @@
                 });
             });
         });
-        
+
     </script>
 {%endblock%}

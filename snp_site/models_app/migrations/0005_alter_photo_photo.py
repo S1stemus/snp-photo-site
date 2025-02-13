@@ -7,13 +7,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('models_app', '0004_user_avatar'),
+        ("models_app", "0004_user_avatar"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='photo',
-            name='photo',
-            field=models.ImageField(upload_to='images/', validators=[django.core.validators.FileExtensionValidator(['png', 'jpg', 'jpeg'])], verbose_name='Фото'),
+            model_name="photo",
+            name="photo",
+            field=models.ImageField(
+                upload_to="images/",
+                validators=[
+                    django.core.validators.FileExtensionValidator(
+                        ["png", "jpg", "jpeg"]
+                    )
+                ],
+                verbose_name="Фото",
+            ),
         ),
     ]

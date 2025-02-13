@@ -46,8 +46,8 @@
         const user_url = 'http://127.0.0.1:8000/users/page/'+localStorage.getItem('user_id')+'/';
 
         if (token) {
-            
-            
+
+
                 let li1 = document.createElement('li');
                 li1.classList.add('nav-item');
                 let a1 = document.createElement('a');
@@ -78,7 +78,7 @@
                     window.location.href = 'http://127.0.0.1:8000/jwt/';
                 });
 
-                
+
                 li1.appendChild(a1);
                 li2.appendChild(a2);
                 li3.appendChild(a3);
@@ -90,10 +90,10 @@
                 navItems.append(li3);
                 navItems.append(li4);
 
-                
+
             ;
         } else {
-           
+
 
             let li1 = document.createElement('li');
             li1.classList.add('nav-item');
@@ -114,7 +114,7 @@
         }
 
         // Обработка выхода из системы
-       
+
     });
 </script>
 </body>

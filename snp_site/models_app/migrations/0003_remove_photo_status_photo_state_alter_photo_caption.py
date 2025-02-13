@@ -6,22 +6,32 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('models_app', '0002_photo_status'),
+        ("models_app", "0002_photo_status"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='photo',
-            name='status',
+            model_name="photo",
+            name="status",
         ),
         migrations.AddField(
-            model_name='photo',
-            name='state',
-            field=models.CharField(choices=[('waiting', 'Ожидание'), ('approved', 'Одобрено'), ('rejected', 'Отклонено'), ('on_delete', 'Ожидает Удаления')], default='waiting', max_length=31, verbose_name='Статус'),
+            model_name="photo",
+            name="state",
+            field=models.CharField(
+                choices=[
+                    ("waiting", "Ожидание"),
+                    ("approved", "Одобрено"),
+                    ("rejected", "Отклонено"),
+                    ("on_delete", "Ожидает Удаления"),
+                ],
+                default="waiting",
+                max_length=31,
+                verbose_name="Статус",
+            ),
         ),
         migrations.AlterField(
-            model_name='photo',
-            name='caption',
-            field=models.CharField(max_length=127, verbose_name='Описание'),
+            model_name="photo",
+            name="caption",
+            field=models.CharField(max_length=127, verbose_name="Описание"),
         ),
     ]

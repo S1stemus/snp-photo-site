@@ -17,7 +17,7 @@ header {
     background-color: #a0a0a0; /* Цвет фона шапки */
     color: #fff; /* Цвет текста */
     padding:10px ;
-   
+
 }
 
 footer {
@@ -33,7 +33,7 @@ a{
 }
 
 img{
-    height: 70%; 
+    height: 70%;
     width: 100%;
 
 }
@@ -47,7 +47,7 @@ img{
     justify-content: space-between; /* Размещаем элементы по краям */
     align-items: center; /* Центрируем элементы по вертикали (если нужно) */
     padding: 10px; /* Отступы внутри контейнера */
-    
+
 }
 .left-element, .right-element {
     padding: 10px; /* Отступы внутри элементов */
@@ -58,8 +58,8 @@ img{
     background-color: white;
     border: 1px solid #ddd;
     border-radius: 8px;
-    margin: 10px; 
-    padding: 15px; 
+    margin: 10px;
+    padding: 15px;
     width: 80%; /* Установите ширину поста, чтобы он не занимал всю ширину контейнера */
     max-width: 600px; /* Максимальная ширина поста */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);

@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('models_app', '0001_initial'),
+        ("models_app", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='photo',
-            name='status',
-            field=models.CharField(default='Ожидает модерации', max_length=100, verbose_name='Статус'),
+            model_name="photo",
+            name="status",
+            field=models.CharField(
+                default="Ожидает модерации", max_length=100, verbose_name="Статус"
+            ),
         ),
     ]

@@ -1,13 +1,17 @@
 from django.db import models
 from viewflow import fsm
 
+
 class State(models.TextChoices):
-    WAITING = 'waiting', 'Ожидание'
-    APPROVED= 'approved', 'Одобрено'
-    REJECTED = 'rejected','Отклонено'
-    ON_DELETE = 'on_delete','Ожидает Удаления'
-class Flow():
+    WAITING = "waiting", "Ожидание"
+    APPROVED = "approved", "Одобрено"
+    REJECTED = "rejected", "Отклонено"
+    ON_DELETE = "on_delete", "Ожидает Удаления"
+
+
+class Flow:
     state = fsm.State(State, default=State.WAITING)
+
     def __init__(self, object):
         self.object = object
 
@@ -22,6 +26,7 @@ class Flow():
     @state.on_success()
     def _on_transition_success(self, descriptor, source, target):
         self.object.save()
+
     @state.transition(source=(State.WAITING), target=State.APPROVED)
     def approve(self):
         pass
@@ -30,16 +35,9 @@ class Flow():
     def reject(self):
         pass
 
-    @state.transition(source=(State.APPROVED,State.REJECTED,State.ON_DELETE,State.WAITING), target=State.WAITING)
+    @state.transition(
+        source=(State.APPROVED, State.REJECTED, State.ON_DELETE, State.WAITING),
+        target=State.WAITING,
+    )
     def update_to_waiting(self):
         pass
-
-    
-
-
-
-    
-
-
-
-    

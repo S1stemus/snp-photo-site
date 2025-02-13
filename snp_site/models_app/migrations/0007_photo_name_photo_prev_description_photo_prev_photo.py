@@ -7,23 +7,36 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('models_app', '0006_rename_caption_photo_description'),
+        ("models_app", "0006_rename_caption_photo_description"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='photo',
-            name='name',
-            field=models.CharField(default='Фотография', max_length=127, verbose_name='Название'),
+            model_name="photo",
+            name="name",
+            field=models.CharField(
+                default="Фотография", max_length=127, verbose_name="Название"
+            ),
         ),
         migrations.AddField(
-            model_name='photo',
-            name='prev_description',
-            field=models.CharField(max_length=127, null=True, verbose_name='Предыдущее описание'),
+            model_name="photo",
+            name="prev_description",
+            field=models.CharField(
+                max_length=127, null=True, verbose_name="Предыдущее описание"
+            ),
         ),
         migrations.AddField(
-            model_name='photo',
-            name='prev_photo',
-            field=models.ImageField(null=True, upload_to='images/', validators=[django.core.validators.FileExtensionValidator(['png', 'jpg', 'jpeg'])], verbose_name='Предыдущее фото'),
+            model_name="photo",
+            name="prev_photo",
+            field=models.ImageField(
+                null=True,
+                upload_to="images/",
+                validators=[
+                    django.core.validators.FileExtensionValidator(
+                        ["png", "jpg", "jpeg"]
+                    )
+                ],
+                verbose_name="Предыдущее фото",
+            ),
         ),
     ]

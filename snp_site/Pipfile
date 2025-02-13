@@ -14,7 +14,6 @@ django-service-objects = { git = "https://git.snpdev.ru/saltpepper/django-servic
 drf-spectacular = "*"
 djangorestframework-simplejwt = "*"
 django-cors-headers = "*"
-channels = "*"
 django-imagekit = "*"
 django-environ = "*"
 rich = "*"
@@ -22,9 +21,19 @@ django-log-request-id = "*"
 celery = "*"
 psycopg2-binary = "*"
 redis = "*"
+channels = {extras = ["daphne"], version = "*"}
 
 [dev-packages]
-
+pre-commit = "*"
+autoflake = "*"
+pyupgrade = "*"
+yesqa = "*"
+flake8 = "*"
+bandit = "*"
+pre-commit-hooks = "*"
+black = "*"
+mypy = "*"
+isort = "*"
 
 [requires]
 python_version = "3.11"

@@ -10,22 +10,19 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
-from pathlib import Path
-from re import S
-import environ
 from datetime import timedelta
-import os
+from pathlib import Path
 
-
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env =environ.Env()
+env = environ.Env()
 environ.Env.read_env()
 
-SECRET_KEY ='django-insecure-n_^%^y0vyl0z*39f0i-5)k4pk64)g3*9q$r+!-8@)^yem$=pa& '
-DEBUG =True
+SECRET_KEY = env("SECRET_KEY", cast=str)
+DEBUG = env("DEBUG", cast=bool, default=False)
 
 # DATABASES = {
 #     'default': {
@@ -40,47 +37,44 @@ ALLOWED_HOSTS = []
 # Application definition
 
 
-
 MIDDLEWARE = [
     "log_request_id.middleware.RequestIDMiddleware",
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "corsheaders.middleware.CorsMiddleware",
 ]
 
-ROOT_URLCONF = 'snp_site.urls'
+ROOT_URLCONF = "snp_site.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'snp_site.wsgi.application'
+WSGI_APPLICATION = "snp_site.wsgi.application"
 
-ASGI_APPLICATION = 'snp_site.asgi.application'
+ASGI_APPLICATION = "snp_site.asgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-
 
 
 # Password validation
@@ -88,16 +82,16 @@ ASGI_APPLICATION = 'snp_site.asgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -105,9 +99,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -117,43 +111,42 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTH_USER_MODEL = 'models_app.User'
+AUTH_USER_MODEL = "models_app.User"
 
-MEDIA_ROOT = BASE_DIR / 'images'
-MEDIA_URL = '/images/'
+MEDIA_ROOT = BASE_DIR / "images"
+MEDIA_URL = "/images/"
 
-LOGIN_REDIRECT_URL = '/photos/'
-LOGOUT_REDIRECT_URL = '/photos/'
+LOGIN_REDIRECT_URL = "/photos/"
+LOGOUT_REDIRECT_URL = "/photos/"
 
 AUTHENTICATION_BACKENDS = [
-    'allauth.account.auth_backends.AuthenticationBackend',
+    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'APP':{
-            'client_id': '237313609638-6orimg6h2nh03aiaiqr2giu3kapp2kqr.apps.googleusercontent.com',
-            'secret': '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',
+    "google": {
+        "APP": {
+            "client_id": "237313609638-6orimg6h2nh03aiaiqr2giu3kapp2kqr.apps.googleusercontent.com",
+            "secret": "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",
         },
-        'SCOPE': ['profile', 'email'],
-        'AUTH_PARAMS': {'access_type': 'online'},
-        'METHOD': 'oauth2',
-        'VERIFIED_EMAIL': True
-
+        "SCOPE": ["profile", "email"],
+        "AUTH_PARAMS": {"access_type": "online"},
+        "METHOD": "oauth2",
+        "VERIFIED_EMAIL": True,
     },
-    'github': {
-        'APP': {
-            'client_id': 'Ov23liVhpNVqoiAgOOen',
-            'secret': 'e85b487bdbf0606bf583b218008c713b6f7987ac',
+    "github": {
+        "APP": {
+            "client_id": "Ov23liVhpNVqoiAgOOen",
+            "secret": "e85b487bdbf0606bf583b218008c713b6f7987ac",
         }
-    }
+    },
 }
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
@@ -165,7 +158,6 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
-
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
     "VERIFYING_KEY": "",
@@ -174,23 +166,18 @@ SIMPLE_JWT = {
     "JSON_ENCODER": None,
     "JWK_URL": None,
     "LEEWAY": 0,
-
     "AUTH_HEADER_TYPES": ("Bearer",),
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
     "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
-
     "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
     "TOKEN_TYPE_CLAIM": "token_type",
     "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
-
     "JTI_CLAIM": "jti",
-
     "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
     "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
-
     "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
     "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
     "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
@@ -199,9 +186,7 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 
-SPECTACULAR_SETTINGS = {
-    'COMPONENT_SPLIT_REQUEST': True
-}
+SPECTACULAR_SETTINGS = {"COMPONENT_SPLIT_REQUEST": True}
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -215,5 +200,3 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-
-
