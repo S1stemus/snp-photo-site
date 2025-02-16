@@ -21,19 +21,10 @@ django-log-request-id = "*"
 celery = "*"
 psycopg2-binary = "*"
 redis = "*"
+pre-commit = "*"
 channels = {extras = ["daphne"], version = "*"}
 
 [dev-packages]
-pre-commit = "*"
-autoflake = "*"
-pyupgrade = "*"
-yesqa = "*"
-flake8 = "*"
-bandit = "*"
-pre-commit-hooks = "*"
-black = "*"
-mypy = "*"
-isort = "*"
 
 [requires]
 python_version = "3.11"
