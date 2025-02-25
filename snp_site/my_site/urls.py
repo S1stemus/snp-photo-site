@@ -7,6 +7,7 @@ from my_site.views.photo_list import PhotoListView
 from my_site.views.photo_page import PhotoPageView
 from my_site.views.register_view import RegisterView
 from my_site.views.user_view import UserView
+from my_site.views.update_view import UpdatePageView
 
 urlpatterns = [
     path("photos/create/", MainPageView.as_view(), name="main_page"),
@@ -18,4 +19,5 @@ urlpatterns = [
     path("comments/create/<pk>/", CommentView.as_view(), name="comment"),
     path("users/page/<int:pk>/", UserView.as_view(), name="user_page"),
     path("jwt/", JwtView.as_view(), name="jwt"),
+    path("photos/update/<pk>/", UpdatePageView.as_view(), name="photo_update"),
 ]
