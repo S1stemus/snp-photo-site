@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Create Photo{% endblock %}
+{% block content %}
+<div class="container d-flex flex-column align-items-center">
+    <h1>Update Photo</h1>
+    <form id="create-form" class="w-50 mb-3" enctype="multipart/form-data">
+        <input id="description" class="form-control" type='text' name="description" placeholder="Description" required>
+        <input id="name" class="form-control" type='text' name="name" placeholder="Name" required>
+        <input id="photo" class="form-control" type="file" name="photo" required>
+        <button id="create-button" class="btn btn-primary mt-3 align-self-center" type="button">Update</button>
+    </form>
+</div>
+{% endblock %}
+{% block js %}
+    <script>
+        if (!localStorage.getItem('token')) {
+            window.location.href = 'http://127.0.0.1:8000/jwt/';
+        } else {
+            document.getElementById('create-button').addEventListener('click', async function() {
+                const description = document.getElementById('description').value;
+                const photo = document.getElementById('photo').files[0];
+                const name =document.getElementById('name').value;
+
+                if (!description || !photo || !name) {
+                    alert('Пожалуйста, заполните все поля.');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('description', description);
+                formData.append('photo', photo);
+                formData.append('name',name);
+
+
+                try {
+                    const response = await fetch('http://127.0.0.1:8000/api/photo/actions/'+getPhotoId(), {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': 'Bearer ' + localStorage.getItem('token')
+                        },
+                        body: formData
+                    });
+
+                    if (response.status === 401) {
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('username');
+                        localStorage.removeItem('user_id');
+                        localStorage.removeItem('refresh');
+                        alert('Время сессии истекло. Пожалуйста, введите данные заново.');
+                        window.location.href = 'http://127.0.0.1:8000/jwt/';
+                        return; // Прерываем выполнение дальнейшего кода
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(response.statusText + ' ' + response.status);
+                    }
+
+                    const data = await response.json();
+                    console.log(data);
+                    alert('Вы успешно создали фото');
+                    window.location.href='http://127.0.0.1:8000/photos/';
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Произошла ошибка при создании фото: ' + error.message);
+                }
+            });
+        }
+        function getPhotoId() {
+            const url = new URL(window.location.href); // Создаем объект URL
+            const pathSegments = url.pathname.split('/'); // Разделяем путь по символу '/'
+            const photoId = pathSegments[pathSegments.length - 2]; // Извлекаем предпоследний элемент
+            return photoId;
+    
+        }
+    </script>
+{% endblock %}
