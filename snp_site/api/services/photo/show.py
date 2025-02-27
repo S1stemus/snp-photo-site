@@ -1,7 +1,5 @@
-from datetime import timedelta
 from functools import lru_cache
-
-from api.tasks import print_word
+from snp_site.tasks import delete_photo, print_word
 from django import forms
 from django.db.models import Count
 from models_app.models import Photo
@@ -9,6 +7,9 @@ from models_app.models.user import User
 from service_objects.errors import NotFound
 from service_objects.fields import ModelField
 from service_objects.services import ServiceWithResult
+import channels.layers
+from asgiref.sync import async_to_sync
+from datetime import timedelta
 
 
 class ShowPhotoService(ServiceWithResult):
@@ -22,12 +23,22 @@ class ShowPhotoService(ServiceWithResult):
     ]
 
     def process(self) -> "ServiceWithResult":
-        self.run_custom_validations()
-        if self.is_valid():
-            print_word.apply_async(
-                args=["nice"], countdown=timedelta(minutes=1).total_seconds()
+
+        self._photo.flow.update_to_on_delete()
+        print_word.apply_async(args = ['nice'] , countdown = timedelta(minutes=1).total_seconds())
+        channel_layer = channels.layers.get_channel_layer()        
+        room_id = "123456"  # Group name defined in your consumer
+
+
+        async_to_sync(channel_layer.group_send)(
+            room_id,
+            {
+                "type": "create",
+                "message": "room"
+            },
             )
-            self.result = self._photo
+        self.run_custom_validations()        
+        self.result = self._photo
         return self
 
     @property
