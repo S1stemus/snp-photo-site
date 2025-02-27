@@ -7,6 +7,13 @@
         <h1 class="fw-bold mt-2 text-center" id="user"></h1>
         <h2 class="mt-2 text-center" id="name"></h2>
         <h3 class="mt-2 text-center" id="description"></h3>
+
+        <div class="card-body d-flex justify-content-center align-items-center gap-2" id ="command-panel">
+            <a id="link">
+                <button type="button" class="btn btn-primary" id="update-button">Редактировать</button>
+            </a>
+            <button type="button" class="btn btn-danger" id="delete-button">Удалить</button>
+        </div>
     </div>
 
     <div class="post card p-4 mb-4" id="post">
@@ -75,10 +82,34 @@
         document.getElementById('description').textContent = data.description;
         document.getElementById('like-count').textContent = data.like_count;
         localStorage.setItem('count', data.like_count); // Сохраняем значение в Local Storage Item
-
+        token=localStorage.getItem('token');
+        if(token && data.user.username==localStorage.getItem('username')){
+                if(data.state=="rejected"){
+                    delete_button=document.getElementById('delete-button');
+                    if(delete_button){
+                        delete_button.remove();
+                    }
+                }
+                if(data.state=="on_delete"){
+                    delete_button=document.getElementById('delete-button');
+                    if(delete_button){
+                        delete_button.textContent="Отменить удаление";
+                    }
+                }           
+        }
+        else{
+            command_panel=document.getElementById('command-panel');
+            if(command_panel){
+                command_panel.remove();
+            }
+        }
         }
     document.addEventListener('DOMContentLoaded', () => {
         fetchphoto();
+        link=document.getElementById('link');
+        if(link){
+            link.href="http://127.0.0.1:8000/photos/update/"+getPhotoId();
+        }
     });
 
 
