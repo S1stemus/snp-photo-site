@@ -1,7 +1,6 @@
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.validators import FileExtensionValidator
 from django.db import models
-from django.utils.safestring import mark_safe
 from models_app.models.photo.fsm import Flow, State
 
 from ..comment import Comment
@@ -58,6 +57,7 @@ class Photo(models.Model):
         default=State.WAITING,
         choices=State.choices,
     )
+    
 
     class Meta:
         app_label = "models_app"
@@ -68,11 +68,3 @@ class Photo(models.Model):
     @property
     def flow(self):
         return Flow(self)
-
-    def admin_photo(self):
-        return mark_safe(
-            f'<img src="{self.photo.url}" width="400" height=auto />'
-        )  # nosec
-
-    admin_photo.short_description = "Фото"
-    admin_photo.allow_tags = True
