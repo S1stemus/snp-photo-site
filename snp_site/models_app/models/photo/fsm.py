@@ -27,11 +27,11 @@ class Flow:
     def _on_transition_success(self, descriptor, source, target):
         self.object.save()
 
-    @state.transition(source=(State.WAITING), target=State.APPROVED)
+    @state.transition(source=(State.WAITING, State.ON_DELETE), target=State.APPROVED)
     def approve(self):
         pass
 
-    @state.transition(source=(State.WAITING), target=State.REJECTED)
+    @state.transition(source=(State.WAITING, State.ON_DELETE), target=State.REJECTED)
     def reject(self):
         pass
 
@@ -40,4 +40,10 @@ class Flow:
         target=State.WAITING,
     )
     def update_to_waiting(self):
+        pass
+
+    @state.transition(
+        source=(State.APPROVED, State.REJECTED, State.WAITING,State.ON_DELETE), target=State.ON_DELETE
+    )
+    def update_to_on_delete(self):
         pass
