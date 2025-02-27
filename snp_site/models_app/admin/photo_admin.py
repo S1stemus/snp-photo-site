@@ -1,17 +1,45 @@
-from api.tasks import delete_photo
 from django.contrib import admin, messages
+from django.utils.safestring import mark_safe
 from models_app.models import Photo
 from models_app.models.photo.fsm import State
+
+from snp_site.tasks import delete_photo
 
 
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
     fields = ("user", "photo", "name", "description", "state")
-    list_display = ("id", "user", "name", "description", "state", "admin_photo")
+    list_display = (
+        "id",
+        "user",
+        "name",
+        "description",
+        "prev_description",
+        "state",
+        "admin_photo",
+        "admin_prev_photo",
+        
+    )
     list_filter = ("state", "created_at")
     list_display_links = ("user", "description", "name")
     actions = ["approve", "reject"]
     search_fields = ("user__username", "description", "name")
+
+    def admin_photo(self, obj):
+        return mark_safe(
+            f'<img src="{obj.photo.url}" width="400" height=auto />'
+        )  # nosec
+
+    def admin_prev_photo(self, obj):
+        print(obj.prev_photo)
+        if not obj.prev_photo:
+            return ""
+        return mark_safe(
+            f'<img src="{obj.prev_photo.url}" ' f'width="400" height=auto />'
+        )  # nosec
+
+    admin_photo.short_description = "Фото"
+    admin_photo.allow_tags = True
 
     def approve(self, request, queryset) -> None:
         for photo in queryset:
@@ -33,5 +61,5 @@ class PhotoAdmin(admin.ModelAdmin):
                     f"Фото с id {photo.id} уже имеет статус отличный от ожидания",
                 )
                 continue
-            photo.flow.reject()
+            photo.flow.reject()  
             delete_photo(photo.id)
