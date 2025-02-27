@@ -12,9 +12,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from datetime import timedelta
 from pathlib import Path
-from celery.schedules import crontab
 
 import environ
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -73,7 +73,14 @@ WSGI_APPLICATION = "snp_site.wsgi.application"
 
 ASGI_APPLICATION = "snp_site.asgi.application"
 
-
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -190,19 +197,6 @@ SIMPLE_JWT = {
 SPECTACULAR_SETTINGS = {"COMPONENT_SPLIT_REQUEST": True}
 
 CORS_ALLOW_ALL_ORIGINS = True
-
-CELERY_BROKER_URL = "redis://localhost:6379"
-CELERY_RESULT_BACKEND = "redis://localhost:6379"
-CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-CELERY_ACCEPT_CONTENT=['json']
-CELERY_TASK_SERIALIZER='json'
-CELERY_BEAT_SCHEDULE = {
-    'my task': {
-        'task': 'snp_site.tasks.myprint',
-        'schedule': crontab(),  
-           
-    },
-}
 
 
 
