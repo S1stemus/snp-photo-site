@@ -1,7 +1,9 @@
-from django.urls import re_path
+from django.urls import path
 
 from . import consumers
 
 websocket_urlpatterns = [
-    re_path("", consumers.MyConsumer.as_asgi()),  # Укажите путь для WebSocket
+    path(
+        "ws/<str:room_id>/", consumers.MyConsumer.as_asgi()
+    ),  
 ]

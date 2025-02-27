@@ -23,6 +23,7 @@ psycopg2-binary = "*"
 redis = "*"
 pre-commit = "*"
 channels = {extras = ["daphne"], version = "*"}
+channels-redis = "*"
 
 [dev-packages]
 
