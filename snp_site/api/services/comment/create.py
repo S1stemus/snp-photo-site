@@ -5,7 +5,8 @@ from models_app.models.photo.models import Photo
 from models_app.models.user import User
 from service_objects.fields import ModelField
 from service_objects.services import ServiceWithResult
-
+import channels.layers
+from asgiref.sync import async_to_sync
 
 class CreateCommentService(ServiceWithResult):
     class_dict = {"photo": Photo, "comment": Comment}
@@ -25,7 +26,7 @@ class CreateCommentService(ServiceWithResult):
 
     @property
     def _create_comment(self):
-        comment = Comment.objects.create(
+        comment = Comment.objects.create(           
             user=self.cleaned_data["current_user"],
             comment=self.cleaned_data["comment"],
             content_type=ContentType.objects.get_for_model(
@@ -33,4 +34,16 @@ class CreateCommentService(ServiceWithResult):
             ),
             object_id=self.cleaned_data["object_id"],
         )
+        photo=Photo.objects.get(id=self.cleaned_data['object_id'])
+        if(photo.user.id != self.cleaned_data['current_user'].id):
+            channel_layer = channels.layers.get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                str(photo.user.id),
+                {
+                    "type": "create",
+                    "message": f"Пользователь {self.cleaned_data['current_user'].username} оставил комментарий. Сейчас комментариев {photo}"
+                },
+            )
+
+
         return comment

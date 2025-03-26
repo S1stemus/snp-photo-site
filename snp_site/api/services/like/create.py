@@ -3,6 +3,8 @@ from models_app.models import Like, Photo, User
 from service_objects.errors import NotFound
 from service_objects.fields import ModelField
 from service_objects.services import ServiceWithResult
+import channels.layers
+from asgiref.sync import async_to_sync
 
 
 class CreateLikeService(ServiceWithResult):
@@ -18,6 +20,7 @@ class CreateLikeService(ServiceWithResult):
         return self
 
     def _create_like(self):
+        photo=Photo.objects.get(id=self.cleaned_data['photo_id'])
 
         if Like.objects.filter(
             photo_id=self.cleaned_data["photo_id"],
@@ -28,12 +31,33 @@ class CreateLikeService(ServiceWithResult):
                 user=self.cleaned_data["current_user"],
             )
             like.delete()
+            if(photo.user.id != self.cleaned_data['current_user'].id):
+                channel_layer = channels.layers.get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    str(photo.user.id),
+                    {
+                        "type": "create",
+                        "message": f"Пользователь {photo.user.username} убрал лайк. Сейчас лайков {photo.likes.count()}"
+                    },
+                )
+            
         else:
-
+            if(photo.user.id != self.cleaned_data['current_user'].id):
+                channel_layer = channels.layers.get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    str(photo.user.id),
+                    {
+                        "type": "create",
+                        "message": f"Пользователь {self.cleaned_data['current_user'].username}  оценил вашу фотографию. Сейчас лайков {photo.likes.count()+1}"
+                    },
+                )
             return Like.objects.create(
                 photo_id=self.cleaned_data["photo_id"],
                 user=self.cleaned_data["current_user"],
             )
+
+
+        
 
         return None
 

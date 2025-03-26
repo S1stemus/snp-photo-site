@@ -23,20 +23,6 @@ class ShowPhotoService(ServiceWithResult):
     ]
 
     def process(self) -> "ServiceWithResult":
-
-        self._photo.flow.update_to_on_delete()
-        print_word.apply_async(args = ['nice'] , countdown = timedelta(minutes=1).total_seconds())
-        channel_layer = channels.layers.get_channel_layer()        
-        room_id = "123456"  # Group name defined in your consumer
-
-
-        async_to_sync(channel_layer.group_send)(
-            room_id,
-            {
-                "type": "create",
-                "message": "room"
-            },
-            )
         self.run_custom_validations()        
         self.result = self._photo
         return self

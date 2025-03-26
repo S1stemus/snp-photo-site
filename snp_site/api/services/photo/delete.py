@@ -1,12 +1,18 @@
 from datetime import timedelta
 
-from api.tasks import delete_photo
+from snp_site.tasks import *
 from django import forms
 from models_app.models import Photo
 from models_app.models.user import User
 from service_objects.errors import NotFound
 from service_objects.fields import ModelField
 from service_objects.services import ServiceWithResult
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
+
+
 
 
 class DeletePhotoService(ServiceWithResult):
@@ -25,14 +31,20 @@ class DeletePhotoService(ServiceWithResult):
     @property
     def _photo(self):
         try:
-            delete_photo.apply_async(
-                self.cleaned_data["id"], countdown=timedelta(minutes=1)
-            )
+           photo=Photo.objects.get(id=self.cleaned_data["id"])
+           print(photo.state)
+           if(photo.state == State.ON_DELETE):
+               photo.flow.update_to_waiting()
+           else:
+               photo.flow.update_to_on_delete()
+               delete_photo.apply_async(args = [self.cleaned_data["id"]] , countdown = env('TIME_TO_DELETE_IN_SECONDS',cast=int,default=86400))
+           return photo
         except Photo.DoesNotExist:
             return None
 
     def _validate_photo_id(self):
-        if not self._photo:
+        photo=Photo.objects.get(id=self.cleaned_data["id"])
+        if not photo:
             self.add_error(
                 "id",
                 NotFound(message=f'Фото c id {self.cleaned_data["id"]} не найдено'),
