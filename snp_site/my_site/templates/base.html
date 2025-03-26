@@ -40,10 +40,30 @@
 {% endblock %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-..." crossorigin="anonymous"></script>
 <script>
+    token=localStorage.getItem('token')
+    url=""
+    if (token){
+        url='ws://127.0.0.1:8000/ws/?token='+token;
+    }
+    else{
+        url='ws://127.0.0.1:8000/ws/';
+    }
+    console.log(url);
+    console.log(localStorage.getItem('token'));
+    socket = new WebSocket(url);
+    socket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        console.log(data);
+        alert(data.message);
+    }
+</script>
+<script>
     $(document).ready(function() {
         const token = localStorage.getItem('token');
         const navItems = $('#nav-items');
-        const user_url = 'http://127.0.0.1:8000/users/page/'+localStorage.getItem('user_id')+'/';
+        user=localStorage.getItem('user_id');
+        console.log
+        const user_url = 'http://127.0.0.1:8000/users/page/'+user+'/';
 
         if (token) {
 
