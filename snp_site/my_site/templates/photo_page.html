@@ -12,7 +12,7 @@
             <a id="link">
                 <button type="button" class="btn btn-primary" id="update-button">Редактировать</button>
             </a>
-            <button type="button" class="btn btn-danger" id="delete-button">Удалить</button>
+            <button type="button" class="btn btn-danger" id="delete-button" >Удалить</button>
         </div>
     </div>
 
@@ -110,7 +110,11 @@
         if(link){
             link.href="http://127.0.0.1:8000/photos/update/"+getPhotoId();
         }
-    });
+    
+    }
+    
+    
+    );
 
 
 
@@ -484,6 +488,34 @@
             });
         }
     }
+    async function Delete_Photo() {
+        photo_id = getPhotoId();
+        const response =await fetch(`http://127.0.0.1:8000/api/photo/actions/${photo_id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+
+        })
+        if(response.status==204){
+            window.location.href = 'http://127.0.0.1:8000/photos/'+photo_id;
+        }
+        else{
+            alert(response.statusText + ' ' + response.status);
+        }
+
+        
+    }
+    delete_photo_button=document.getElementById('delete-button');
+    if(delete_photo_button){
+        delete_photo_button.addEventListener('click', async function(event) {
+            event.preventDefault();
+            id=getPhotoId();
+            Delete_Photo(id);
+
+        });
+    }   
 
 
 
