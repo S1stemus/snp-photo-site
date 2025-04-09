@@ -24,6 +24,7 @@ redis = "*"
 pre-commit = "*"
 channels = {extras = ["daphne"], version = "*"}
 channels-redis = "*"
+factory-boy = "*"
 
 [dev-packages]
 

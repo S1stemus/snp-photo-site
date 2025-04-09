@@ -85,13 +85,13 @@ class RetreiveCommentView(APIView):
         tags=["Комментарии"],
         summary="удаляет комментарии по id",
         description="удаляет комментарии по id",
-        responses={200: None},
+        responses={204: None},
     )
     def delete(self, request, *args, **kwargs):
         ServiceOutcome(
             DeleteCommentService, {"id": kwargs["id"], "current_user": request.user}
         )
-        return Response(None, status=status.HTTP_200_OK)
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(
         tags=["Комментарии"],

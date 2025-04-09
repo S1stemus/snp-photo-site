@@ -43,7 +43,8 @@ class Flow:
         pass
 
     @state.transition(
-        source=(State.APPROVED, State.REJECTED, State.WAITING,State.ON_DELETE), target=State.ON_DELETE
+        source=(State.APPROVED, State.REJECTED, State.WAITING, State.ON_DELETE),
+        target=State.ON_DELETE,
     )
     def update_to_on_delete(self):
         pass

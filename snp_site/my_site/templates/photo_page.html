@@ -73,6 +73,9 @@
                 'Content-Type': 'application/json'
             }
         });
+        if(response.status==404){
+            window.location.href = 'http://127.0.0.1:8000/photos/';
+        }
         const data = await response.json();
         console.log(data);
         checkToken(data.like_count,data.comment_count);
@@ -95,7 +98,7 @@
                     if(delete_button){
                         delete_button.textContent="Отменить удаление";
                     }
-                }           
+                }
         }
         else{
             command_panel=document.getElementById('command-panel');
@@ -110,10 +113,10 @@
         if(link){
             link.href="http://127.0.0.1:8000/photos/update/"+getPhotoId();
         }
-    
+
     }
-    
-    
+
+
     );
 
 
@@ -505,7 +508,7 @@
             alert(response.statusText + ' ' + response.status);
         }
 
-        
+
     }
     delete_photo_button=document.getElementById('delete-button');
     if(delete_photo_button){
@@ -515,7 +518,7 @@
             Delete_Photo(id);
 
         });
-    }   
+    }
 
 
 

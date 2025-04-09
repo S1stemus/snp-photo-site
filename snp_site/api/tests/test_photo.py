@@ -1,7 +1,6 @@
 from urllib import response
 from django.test import TestCase
 from models_app.factories import PhotoFactory,UserFactory
-from models_app.models.user import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.files.uploadedfile import SimpleUploadedFile
 from faker import Faker
@@ -17,10 +16,6 @@ class PhotoShowTest(TestCase):
     def setUpTestData(cls):
         cls.photo = PhotoFactory()
         cls.url='/api/photo/'
-        cls.jwt_url='/api/token/' 
-        cls.user=UserFactory()       
-        token=str(RefreshToken.for_user(cls.user).access_token)
-
 
     
     
@@ -50,7 +45,6 @@ class PhotoListCreateTest(TestCase):
     
     def test_photos_list_max_status_200(self):
         response=self.client.get(f'{self.url}?page=1&per_page=2&search_field=asd&sort_direction=desc&sort_field=created_at')
-        print(response.data)
         self.assertEqual(response.status_code,200)
     def test_create_photo_status_200(self):
         # Создаем тестовые данные
@@ -70,7 +64,7 @@ class PhotoListCreateTest(TestCase):
             HTTP_AUTHORIZATION='Bearer ' + self.token
         )
         
-        breakpoint()
+
         self.assertEqual(response.status_code, 200)
 
 class PhotoUpdateDeleteTest(TestCase):
@@ -98,10 +92,8 @@ class PhotoUpdateDeleteTest(TestCase):
         response=client.put(path=f'{self.url}{self.photo.id}', data=data ,content_type='multipart/form-data; boundary=dadsfga',HTTP_AUTHORIZATION='Bearer ' + self.token)
         self.assertEqual(response.status_code,200)
     def test_delete_photo_status_200(self):
-        headers={
-            'Content-Type': 'application/json',
-            'HTTP_AUTHORIZATION': 'Bearer ' + self.token
-            }
-        response=self.client.delete(f'{self.url}{self.photo.id}/', headers=headers)
-        self.assertEqual(response.status_code,200)
+
+        client = APIClient()
+        response=client.delete(path=f'{self.url}{self.photo.id}',HTTP_AUTHORIZATION='Bearer ' + self.token)
+        self.assertEqual(response.status_code,204)
 

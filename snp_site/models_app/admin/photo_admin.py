@@ -1,9 +1,10 @@
+import channels.layers
+from asgiref.sync import async_to_sync
 from django.contrib import admin, messages
 from django.utils.safestring import mark_safe
 from models_app.models import Photo
 from models_app.models.photo.fsm import State
-import channels.layers
-from asgiref.sync import async_to_sync
+
 from snp_site.tasks import delete_photo
 
 
@@ -19,7 +20,6 @@ class PhotoAdmin(admin.ModelAdmin):
         "state",
         "admin_photo",
         "admin_prev_photo",
-        
     )
     list_filter = ("state", "created_at")
     list_display_links = ("user", "description", "name")
@@ -45,7 +45,7 @@ class PhotoAdmin(admin.ModelAdmin):
     def approve(self, request, queryset) -> None:
         for photo in queryset:
             if photo.state != State.WAITING:
-                
+
                 messages.add_message(
                     request,
                     messages.WARNING,
@@ -56,17 +56,14 @@ class PhotoAdmin(admin.ModelAdmin):
             print(photo.user.id)
             async_to_sync(channel_layer.group_send)(
                 str(photo.user.id),
-                {
-                    "type": "create",
-                    "message": f"Фотогорафию {photo.name}  одобрили"
-                },
+                {"type": "create", "message": f"Фотогорафию {photo.name}  одобрили"},
             )
             photo.flow.approve()
 
     def reject(self, request, queryset):
         for photo in queryset:
             if photo.state != State.WAITING:
-                
+
                 messages.add_message(
                     request,
                     messages.INFO,
@@ -76,10 +73,7 @@ class PhotoAdmin(admin.ModelAdmin):
             channel_layer = channels.layers.get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 str(photo.user.id),
-                {
-                    "type": "create",
-                    "message": f"Фотогорафию {photo.name}  отклонили"
-                },
+                {"type": "create", "message": f"Фотогорафию {photo.name}  отклонили"},
             )
-            photo.flow.reject()  
+            photo.flow.reject()
             delete_photo(photo.id)

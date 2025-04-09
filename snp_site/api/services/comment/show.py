@@ -45,9 +45,7 @@ class RetrieveCommentsByIdService(ServiceWithResult):
         )
 
     def _validate_comment_id(self):
-        if (
-            not Comment.objects.filter(object_id=self.cleaned_data["id"]).exists()
-        ) and (not Photo.objects.filter(id=self.cleaned_data["id"]).exists()):
+        if not Comment.objects.filter(id=self.cleaned_data["id"]).exists():
             self.add_error(
                 "id", NotFound(message=f'Объект {self.cleaned_data["id"]} не найден ')
             )

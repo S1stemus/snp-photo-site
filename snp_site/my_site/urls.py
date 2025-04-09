@@ -6,8 +6,8 @@ from my_site.views.main_page import MainPageView
 from my_site.views.photo_list import PhotoListView
 from my_site.views.photo_page import PhotoPageView
 from my_site.views.register_view import RegisterView
-from my_site.views.user_view import UserView
 from my_site.views.update_view import UpdatePageView
+from my_site.views.user_view import UserView
 
 urlpatterns = [
     path("photos/create/", MainPageView.as_view(), name="main_page"),

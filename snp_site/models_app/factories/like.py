@@ -2,8 +2,6 @@ import factory
 from models_app.models import Like
 from faker import Faker
 
-from snp_site.api.views import photo
-
 faker=Faker()
 
 class LikeFactory(factory.django.DjangoModelFactory):

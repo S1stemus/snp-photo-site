@@ -57,7 +57,6 @@ class Photo(models.Model):
         default=State.WAITING,
         choices=State.choices,
     )
-    
 
     class Meta:
         app_label = "models_app"

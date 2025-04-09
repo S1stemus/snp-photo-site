@@ -134,13 +134,15 @@ class UpdateDeletePhotoView(APIView):
         tags=["Фотографии"],
         summary="Удаляет фотографию по id",
         description="Удаляет фотографию по id",
-        responses={200: None},
+        responses={204: None},
     )
     def delete(self, request, *args, **kwargs):
-        outcome = ServiceOutcome(DeletePhotoService, {"id": kwargs["id"],"current_user":request.user})
+        outcome = ServiceOutcome(
+            DeletePhotoService, {"id": kwargs["id"], "current_user": request.user}
+        )
         if outcome.result:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
     @extend_schema(
         tags=["Фотографии"],

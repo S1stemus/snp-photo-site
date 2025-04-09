@@ -6,7 +6,7 @@ settings = [
     "django.py",
     "logs.py",
     "rest_framework_settings.py",
-    "celery.py"
+    "celery.py",
 ]
 
 include(*settings)
