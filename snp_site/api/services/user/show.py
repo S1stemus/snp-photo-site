@@ -1,3 +1,4 @@
+from service_objects.errors import NotFound
 from django import forms
 from models_app.models import User
 from service_objects.fields import ModelField
@@ -19,9 +20,8 @@ class UserShowService(ServiceWithResult):
     @property
     def _user_id(self):
         user = User.objects.get(id=self.cleaned_data["user_id"])
-        print(user.username)
         return user
 
     def _validate_user_id(self):
         if not User.objects.filter(id=self.cleaned_data["user_id"]).exists():
-            self.add_error("user_id", "Пользователь не найден")
+            self.add_error("user_id", NotFound(message=f"Пользователь с id {self.cleaned_data['user_id']} не найден"))

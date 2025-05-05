@@ -29,7 +29,6 @@ class DeletePhotoService(ServiceWithResult):
     def _photo(self):
         try:
             photo = Photo.objects.get(id=self.cleaned_data["id"])
-            print(photo.state)
             if photo.state == State.ON_DELETE:
                 photo.flow.update_to_waiting()
             else:

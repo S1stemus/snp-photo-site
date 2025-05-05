@@ -1,3 +1,4 @@
+from service_objects.errors import NotFound
 from django import forms
 from django.conf import settings
 from django.contrib.postgres.forms import SimpleArrayField
@@ -34,7 +35,7 @@ class UserPhotoService(ServiceWithResult):
 
     def _validate_user(self):
         if not User.objects.filter(id=self.cleaned_data["user_id"]).exists():
-            self.add_error("user", "Пользователь не найден")
+            self.add_error("user",NotFound(message=f"Пользователь не найден"))
 
     def process(self):
         self.run_custom_validations()
@@ -72,6 +73,8 @@ class UserPhotoService(ServiceWithResult):
             photo = photo.order_by(f"{sorting}created_at")
         elif self.cleaned_data.get("sort_field") == "comment_count":
             photo = photo.order_by(f"{sorting}comment_count")
+        else:
+            photo = photo.order_by('-id')
 
         if (
             User.objects.get(id=self.cleaned_data["user_id"])

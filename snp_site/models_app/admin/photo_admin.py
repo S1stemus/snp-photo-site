@@ -32,7 +32,6 @@ class PhotoAdmin(admin.ModelAdmin):
         )  # nosec
 
     def admin_prev_photo(self, obj):
-        print(obj.prev_photo)
         if not obj.prev_photo:
             return ""
         return mark_safe(
@@ -53,7 +52,6 @@ class PhotoAdmin(admin.ModelAdmin):
                 )
                 continue
             channel_layer = channels.layers.get_channel_layer()
-            print(photo.user.id)
             async_to_sync(channel_layer.group_send)(
                 str(photo.user.id),
                 {"type": "create", "message": f"Фотогорафию {photo.name}  одобрили"},

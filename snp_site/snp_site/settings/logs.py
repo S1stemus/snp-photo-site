@@ -20,7 +20,7 @@ LOGGING = {
     },
     "handlers": {
         "console": {
-            "level": "DEBUG",
+            "level": "INFO",
             "class": "rich.logging.RichHandler",
             "filters": ["request_id"],
             "formatter": "simple",
@@ -35,7 +35,7 @@ LOGGING = {
     "loggers": {
         "django.db.backends": {  # Логирование запросов к базе данных
             "handlers": ["console", "file"],
-            "level": "DEBUG",
+            "level": "INFO",
             "propagate": False,
         },
     },

@@ -31,6 +31,10 @@ class UserPhotosTest(TestCase):
     def test_user_photos_status_200(self):
         response=self.client.get(f'/api/users/photos/{self.user.id}/')
         self.assertEqual(response.status_code,200)
+    def test_user_photos_status_404(self):
+        response=self.client.get(f'/api/users/photos/100000/')
+        breakpoint()
+        self.assertEqual(response.status_code,404)
     
 class UserCreateTest(TestCase):
     @classmethod
@@ -38,7 +42,7 @@ class UserCreateTest(TestCase):
         cls.url='/api/users/register/'
 
 
-    def test_create_user_status_200(self):
+    def test_create_user_status_201(self):
         data = {
             'username': 'ldfasfsdf',
             'password': 'sss',

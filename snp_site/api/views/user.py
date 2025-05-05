@@ -109,7 +109,6 @@ class ListUserPhotoView(APIView):
     def get(self, request, *args, **kwargs):
         data = self._fetch_query_params_dict(request)
         user = None if request.user.is_anonymous else request.user
-        print(data)
         outcome = ServiceOutcome(
             UserPhotoService,
             {"user_id": kwargs["id"], "current_user": user} | data,

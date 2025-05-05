@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from datetime import timedelta
 from pathlib import Path
+from re import S
 
 import environ
 
@@ -126,6 +127,8 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "models_app.User"
+
+STATIC_ROOT = BASE_DIR / "static"
 
 MEDIA_ROOT = BASE_DIR / "images"
 MEDIA_URL = "/images/"

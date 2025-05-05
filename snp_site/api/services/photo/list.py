@@ -67,5 +67,7 @@ class ListPhotoService(ServiceWithResult):
             photos = photos.order_by(f"{sorting}created_at")
         elif self.cleaned_data.get("sort_field") == "comment_count":
             photos = photos.order_by(f"{sorting}comment_count")
+        else:
+            photos = photos.order_by('-id')
 
         return photos

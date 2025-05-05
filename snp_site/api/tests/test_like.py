@@ -13,7 +13,7 @@ class Liketest(TestCase):
     def setUp(cls):
         cls.url = '/api/like/'
         cls.user = UserFactory()
-        cls.photo = PhotoFactory(user=cls.user)
+        cls.photo = PhotoFactory(user = cls.user)
         cls.token = RefreshToken.for_user(cls.user).access_token
     def test_like_status_200(self):
         data = {

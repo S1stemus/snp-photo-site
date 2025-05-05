@@ -38,13 +38,21 @@ class PhotoListCreateTest(TestCase):
         cls.user=UserFactory()       
         cls.token=str(RefreshToken.for_user(cls.user).access_token)
         cls.url='/api/photos/'
+        
     
     def test_photos_list_min_status_200(self):
         response=self.client.get(f'{self.url}')
         self.assertEqual(len(response.data),2)
     
     def test_photos_list_max_status_200(self):
-        response=self.client.get(f'{self.url}?page=1&per_page=2&search_field=asd&sort_direction=desc&sort_field=created_at')
+        data={
+            'page':faker.random_int(min=1,max=10),
+            'per_page':faker.random_int(min=1,max=100),
+            'search_field':faker.word(),
+            'sort_direction':faker.random_choices(elements=('asc','desc'),length=1)[0],
+            'sort_field':faker.random_choices(elements=('created_at','popularity','comment_count'),length=1)[0]
+        }
+        response=self.client.get(f'{self.url}',data=data)
         self.assertEqual(response.status_code,200)
     def test_create_photo_status_200(self):
         # Создаем тестовые данные
